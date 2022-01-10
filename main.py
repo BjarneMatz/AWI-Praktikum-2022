@@ -3,8 +3,11 @@ from tkinter import ttk
 
 
 def ex():
-    exit()
-
+    try:
+        ide = float(id.get())
+        greatid.set(int(ide + 1))
+    except ValueError:
+        print("Falsch.")
 
 root = Tk()
 
@@ -16,6 +19,16 @@ mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
 
 ttk.Label(mainframe, text="Hallo Welt").grid(column=1, row=1)
 ttk.Button(mainframe, text="Tschüss!", command=ex).grid(column=1, row=2)
+
+
+id = StringVar()
+id_entry = ttk.Entry(mainframe, width=10, textvariable=id)
+id_entry.grid(column=1, row=3)
+
+greatid = StringVar()
+ttk.Label(mainframe, textvariable=greatid).grid(column=2, row=1)
+
+
 root.mainloop()
 
 # This is a sample Python script.
