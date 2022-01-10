@@ -1,3 +1,23 @@
+from tkinter import *
+from tkinter import ttk
+
+
+def ex():
+    exit()
+
+
+root = Tk()
+
+root.title("Hallo Welt")
+
+mainframe = ttk.Frame(root, padding="200 200 200 200")
+mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
+
+
+ttk.Label(mainframe, text="Hallo Welt").grid(column=1, row=1)
+ttk.Button(mainframe, text="Tschüss!", command=ex).grid(column=1, row=2)
+root.mainloop()
+
 # This is a sample Python script.
 
 # Press Umschalt+F10 to execute it or replace it with your code.
