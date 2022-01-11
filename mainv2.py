@@ -5,9 +5,22 @@ import json
 import requests
 import logging
 
+#global variables
+
 #functions for buttons listed below
 def searchById():
-    pass
+    try:
+        sid = senid.get()
+        global sensor
+        sensor = requests.get(f"https://sandbox.sensor.awi.de/rest/sensors/device/getDevice/{sid}")
+        sensor = sensor.json()
+        setMeta()
+    except Exception as ex:
+        print(ex)
+        pass
+def setMeta():
+
+    isenid.insert(sensor['id'])
 
 
 def login():
@@ -60,6 +73,8 @@ senframe = Frame(root)
 senframe.grid(column=0, row=0)
 Label(senframe, text="Sensor Event Manager").grid(column=0, row=0)
 
+seninfo = Frame(senframe)
+seninfo.grid(column=1, row=2)
 
 senid = Entry(senframe, width=40, borderwidth=3)
 senid.grid(column=1, row=0, columnspan=2)
@@ -75,7 +90,7 @@ for ix, col in enumerate(collections):
     print(col["collectionName"])
     items = requests.get(f"https://sensor.awi.de/rest/sensors/collections/getItemsOfCollection/{col['id']}")
     items = items.json()
-    main = tw.insert('', iid=ix, index=ix, text=col["collectionName"])
+    main = tw.insert('', index=ix, text=col["collectionName"])
     #time.sleep(2)
     for iix, item in enumerate(items):
         tw.insert(main, index=iix, text=item["shortName"])
@@ -83,16 +98,18 @@ for ix, col in enumerate(collections):
 
 
 Button(senframe, command=searchById, width=20, text="Search by ID").grid(column=3, row=0)
-isenid = ''
-iurn = ''
-ishortname = ''
-ilongname = ''
-Label(senframe, text="Data of selcted sensor").grid(column=1,row=2, sticky="N")
 
-Label(senframe, text=isenid).grid(column=1, row=3)
-Label(senframe, text=iurn).grid(column=1, row=4)
-Label(senframe, text=ishortname).grid(column=1, row=5)
-Label(senframe, text=ilongname).grid(column=1, row=6)
+Label(seninfo, text="Data of selcted sensor").grid(column=1, row=2, columnspan=2, sticky="N")
+
+Label(seninfo, text="SensorID:").grid(column=1, row=3)
+Label(seninfo, text="URN:").grid(column=1, row=4)
+Label(seninfo, text="Shortname:").grid(column=1, row=5)
+Label(seninfo, text="Longname:").grid(column=1, row=6)
+
+isenid = Entry(seninfo).grid(column=2, row=3)
+Entry(seninfo).grid(column=2, row=4)
+Entry(seninfo).grid(column=2, row=5)
+Entry(seninfo).grid(column=2, row=6)
 
 #login frame
 loginframe = Frame(root)
