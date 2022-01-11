@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import ttk
 import tkinter as tk
 import json, requests
 
@@ -49,10 +50,12 @@ footer = tk.Frame(root)
 sensorinfo = tk.Frame(root)
 data = tk.Frame(root)
 upload = tk.Frame(root)
+sensorlib = tk.Frame(root)
 
 sensorinfo.grid(column=0, row=1)
 data.grid(column=1, row=1)
 upload.grid(column=2, row=1)
+sensorlib.grid(column=3, row=1)
 
 header.grid(column=0, columnspan=3, row=0)
 footer.grid(column=0, row=2)
@@ -87,6 +90,27 @@ log = StringVar()
 logger = tk.Entry(upload, state=DISABLED)
 logger.grid(column=1, row=2)
 tk.Button(upload, text="Upload", command=uploadData).grid(column=1, row=1)
+
+
+# ----TREE SENSOR LIBRARY----
+twc = ttk.Treeview(sensorlib)
+twc.pack()
+
+
+
+collections = requests.get(f"https://sensor.awi.de/rest/sensors/collections/getAllCollections")
+collections = collections.json()
+
+
+
+for c in collections:
+    print(c["collectionName"])
+    col = c["collectionName"]
+    items = requests.get(f"https://sensor.awi.de/rest/sensors/collections/getItemsOfCollection/{c['id']}")
+    twc.insert('', c["id"], text=col)
+
+
+
 
 # ----DATA INPUT----
 tk.Label(data, text="Data2Write").grid(column=1, row=0, columnspan=2)
