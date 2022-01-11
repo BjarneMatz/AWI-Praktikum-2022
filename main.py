@@ -1,6 +1,6 @@
 from tkinter import *
-from tkinter import ttk
 import tkinter as tk
+from tkinter import ttk
 import requests
 import time
 
@@ -11,21 +11,22 @@ def uploadData():
 
 
 def getData():
-    try:
-        sid = id.get()
-        sensor = requests.get(f"https://sandbox.sensor.awi.de/rest/sensors/device/getDevice/{sid}")
-        sensor = sensor.json()
-        urnget = sensor["urn"]
-        shortnameget = sensor["shortName"]
-        longnameget = sensor["longName"]
+    if id != '':
+        try:
+            sid = id.get()
+            sensor = requests.get(f"https://sandbox.sensor.awi.de/rest/sensors/device/getDevice/{sid}")
+            sensor = sensor.json()
+        except:
+            pass
+    elif id == '':
+        try:
+            print(twc.selection_get())
+        except:
+            pass
+    else:
+        changeText(logger, "Select a sensor through tree or by id search")
+        pass
 
-
-        changeText(urn, urnget)
-        changeText(shortname, shortnameget)
-        changeText(longname, longnameget)
-        metabutton.config(state=NORMAL)
-    except Exception as ex:
-        changeText(logger, ex)
 
 def changeText(box, string):
     box.config(state=NORMAL)
@@ -66,11 +67,7 @@ header.config(bg="#0044FF")
 tk.Label(header, text="SENSOR Metadata Writer", bg="#0044FF").grid(column=0, columnspan=3, row=0)
 
 # ----SENSOR ID----
-tk.Label(sensorinfo, text="Sensor Metadata").grid(column=0, row=0, columnspan=2)
-tk.Label(sensorinfo, text="Sensor ID:").grid(column=0, row=2)
-id = StringVar()
-tk.Entry(sensorinfo, width=10, textvariable=id, state=NORMAL).grid(column=1, row=2)
-tk.Button(sensorinfo, text="Load Sensor", width=30, command=getData).grid(column=0, columnspan=2, row=3)
+
 
 tk.Label(sensorinfo, text="Selected Sensor:").grid(column=0, row=4, columnspan=2)
 urn = tk.Entry(sensorinfo, width=80, state=DISABLED)
@@ -94,15 +91,13 @@ tk.Button(upload, text="Upload", command=uploadData).grid(column=1, row=1)
 
 
 # ----TREE SENSOR LIBRARY----
-twc = ttk.Treeview(sensorlib)
-twc.pack()
+twc = ttk.Treeview(sensorinfo, selectmode="browse",)
+twc.grid(column=0, row=2)
 
 
 
 collections = requests.get(f"https://sensor.awi.de/rest/sensors/collections/getAllCollections")
 collections = collections.json()
-
-
 
 for ix, col in enumerate(collections):
     print(ix)
@@ -114,7 +109,12 @@ for ix, col in enumerate(collections):
     for iix, item in enumerate(items):
         twc.insert(main, index=iix, text=item["shortName"])
 
+tk.Label(sensorinfo, text="Sensor Metadata").grid(column=0, row=0, columnspan=2)
+tk.Label(sensorinfo, text="Sensor ID:").grid(column=0, row=2)
 
+id = StringVar()
+tk.Entry(sensorinfo, width=10, textvariable=id, state=NORMAL).grid(column=0, row=0)
+tk.Button(sensorinfo, text="Load Sensor", width=30, command=getData).grid(column=3, columnspan=2, row=3)
 
 
 # ----DATA INPUT----
