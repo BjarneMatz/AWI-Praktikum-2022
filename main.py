@@ -1,7 +1,8 @@
 from tkinter import *
 from tkinter import ttk
 import tkinter as tk
-import json, requests
+import requests
+import time
 
 
 
@@ -103,11 +104,15 @@ collections = collections.json()
 
 
 
-for c in collections:
-    print(c["collectionName"])
-    col = c["collectionName"]
-    items = requests.get(f"https://sensor.awi.de/rest/sensors/collections/getItemsOfCollection/{c['id']}")
-    twc.insert('', c["id"], text=col)
+for ix, col in enumerate(collections):
+    print(ix)
+    print(col["collectionName"])
+    items = requests.get(f"https://sensor.awi.de/rest/sensors/collections/getItemsOfCollection/{col['id']}")
+    items = items.json()
+    main = twc.insert('', iid=ix, index=ix, text=col["collectionName"])
+    #time.sleep(2)
+    for iix, item in enumerate(items):
+        twc.insert(main, index=iix, text=item["shortName"])
 
 
 
