@@ -1,4 +1,3 @@
-import time
 from tkinter import *
 import tkinter as tk
 from tkinter import ttk
@@ -6,10 +5,9 @@ import json
 import requests
 import logging
 
-#global variables
 
-#functions for buttons listed below
 def searchById():
+    "this function searches for a sensor by its id"
     with open('accounts.json', encoding='utf-8') as f:
         accounts = json.load(f)
     try:
@@ -21,7 +19,10 @@ def searchById():
         setMeta(sensor)
     except Exception as ex:
         print(ex)
+
+
 def setMeta(sensor):
+    "this function sets the meta information in the sensor information frame to the current sensor used"
     isenid.delete(0, "end")
     iurn.delete(0, "end")
     ishortname.delete(0, "end")
@@ -30,9 +31,10 @@ def setMeta(sensor):
     iurn.insert(0, sensor['urn'])
     ishortname.insert(0, sensor["shortName"])
     ilongname.insert(0, sensor["longName"])
-    print(isenid)
-    pass
+
+
 def selectItem(a):
+    "this functions returns the id of the sensor selected in the treeview menu"
     item = tw.focus()
     item = tw.item(item)
     if item["values"] == "":
@@ -44,7 +46,8 @@ def selectItem(a):
 
 
 def login():
-    # login code by maximilian betz
+    "login code by maximilian betz; used to login on sensor api service"
+
     with open('accounts.json', encoding='utf-8') as f:
         accounts = json.load(f)
     # Get sensor.awi.de event types access token
@@ -82,20 +85,25 @@ def login():
         logging.error("Communication error to sensor.awi.de: {}".format(e))
 
 
+
+
+#defining the root window
 root = tk.Tk()
 root.title("Event Writer")
 root.geometry("1280x720")
 root.config(bg="#07ace7")
 
 
-#sensor frame
+#sensor frame is the information and select screen of the sensor
 senframe = Frame(root)
 senframe.place(x=0, y=0, height=360, width=640, bordermode="inside")
 Label(senframe, text="Sensor Event Manager").grid(column=0, row=0)
-
-tw = ttk.Treeview(senframe, columns="c1")
-tw.place(x=0 ,y=25, width=200)
+tw = ttk.Treeview(senframe, columns="c1", cursor="hand1")
+tw.place(x=0 ,y=25, width=200, height=330)
 tw.heading(column="c1", text="Collections")
+
+twsb = ttk.Scrollbar(senframe, orient="vertical", command=tw.yview, cursor="double_arrow")
+twsb.place(x=200, y=25, width=20, height=330, anchor=NE)
 
 collections = requests.get(f"https://sandbox.sensor.awi.de/rest/sensors/collections/getAllCollections")
 collections = collections.json()
@@ -106,11 +114,8 @@ for ix, col in enumerate(collections):
     items = requests.get(f"https://sandbox.sensor.awi.de/rest/sensors/collections/getItemsOfCollection/{col['id']}")
     items = items.json()
     main = tw.insert('', index=ix, text=col["collectionName"])
-    #time.sleep(2)
     for iix, item in enumerate(items):
         tw.insert(main, index=iix, text=item["shortName"], values=item["id"])
-
-
 
 searchidbutton = Button(senframe, command=searchById, width=20, text="Search by ID")
 searchidbutton.place(x=500, y=0, width=130)
@@ -137,8 +142,10 @@ ilongname.place(x=300, y=120, width=300)
 loginframe = Frame(root)
 loginframe.grid(column=0, row=0)
 
-
+#default button binds
 tw.bind('<ButtonRelease-1>', selectItem)
 
-root.mainloop()
+evframe = Frame(root)
+evframe.place(x=360, y=0, height=640, width=360)
 
+root.mainloop()
