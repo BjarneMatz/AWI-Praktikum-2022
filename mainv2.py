@@ -1,3 +1,4 @@
+import time
 from tkinter import *
 import tkinter as tk
 from tkinter import ttk
@@ -9,24 +10,43 @@ import logging
 
 #functions for buttons listed below
 def searchById():
+    with open('accounts.json', encoding='utf-8') as f:
+        accounts = json.load(f)
     try:
         sid = senid.get()
         global sensor
-        sensor = requests.get(f"https://sandbox.sensor.awi.de/rest/sensors/device/getDevice/{sid}")
+        url = accounts['sensorurl'] + f'/sensors/device/getDevice/{sid}'
+        sensor = requests.get(url)
         sensor = sensor.json()
-        setMeta()
+        setMeta(sensor)
     except Exception as ex:
         print(ex)
+def setMeta(sensor):
+    isenid.delete(0, "end")
+    iurn.delete(0, "end")
+    ishortname.delete(0, "end")
+    ilongname.delete(0, "end")
+    isenid.insert(0, sensor['id'])
+    iurn.insert(0, sensor['urn'])
+    ishortname.insert(0, sensor["shortName"])
+    ilongname.insert(0, sensor["longName"])
+    print(isenid)
+    pass
+def selectItem(a):
+    item = tw.focus()
+    item = tw.item(item)
+    if item["values"] == "":
         pass
-def setMeta():
-
-    isenid.insert(sensor['id'])
+    else:
+        senid.delete(0, "end")
+        senid.insert(0, item["values"])
+        searchById()
 
 
 def login():
+    # login code by maximilian betz
     with open('accounts.json', encoding='utf-8') as f:
         accounts = json.load(f)
-
     # Get sensor.awi.de event types access token
     try:
         # Get all device operation types and create id look up table
@@ -70,51 +90,55 @@ root.config(bg="#07ace7")
 
 #sensor frame
 senframe = Frame(root)
-senframe.grid(column=0, row=0)
+senframe.place(x=0, y=0, height=360, width=640, bordermode="inside")
 Label(senframe, text="Sensor Event Manager").grid(column=0, row=0)
 
-seninfo = Frame(senframe)
-seninfo.grid(column=1, row=2)
-
-senid = Entry(senframe, width=40, borderwidth=3)
-senid.grid(column=1, row=0, columnspan=2)
 tw = ttk.Treeview(senframe, columns="c1")
-tw.grid(column=0, row=1, rowspan=3)
+tw.place(x=0 ,y=25, width=200)
 tw.heading(column="c1", text="Collections")
 
-collections = requests.get(f"https://sensor.awi.de/rest/sensors/collections/getAllCollections")
+collections = requests.get(f"https://sandbox.sensor.awi.de/rest/sensors/collections/getAllCollections")
 collections = collections.json()
 
 for ix, col in enumerate(collections):
     print(ix)
     print(col["collectionName"])
-    items = requests.get(f"https://sensor.awi.de/rest/sensors/collections/getItemsOfCollection/{col['id']}")
+    items = requests.get(f"https://sandbox.sensor.awi.de/rest/sensors/collections/getItemsOfCollection/{col['id']}")
     items = items.json()
     main = tw.insert('', index=ix, text=col["collectionName"])
     #time.sleep(2)
     for iix, item in enumerate(items):
-        tw.insert(main, index=iix, text=item["shortName"])
+        tw.insert(main, index=iix, text=item["shortName"], values=item["id"])
 
 
 
-Button(senframe, command=searchById, width=20, text="Search by ID").grid(column=3, row=0)
+searchidbutton = Button(senframe, command=searchById, width=20, text="Search by ID")
+searchidbutton.place(x=500, y=0, width=130)
+senid = Entry(senframe, width=40, borderwidth=3)
+senid.place(x=200, y=0, width=300)
 
-Label(seninfo, text="Data of selcted sensor").grid(column=1, row=2, columnspan=2, sticky="N")
+Label(senframe, text="Data of selcted sensor").place(x=200, y=25)
 
-Label(seninfo, text="SensorID:").grid(column=1, row=3)
-Label(seninfo, text="URN:").grid(column=1, row=4)
-Label(seninfo, text="Shortname:").grid(column=1, row=5)
-Label(seninfo, text="Longname:").grid(column=1, row=6)
+Label(senframe, text="SensorID:").place(x=210, y=45)
+Label(senframe, text="URN:").place(x=210, y=70)
+Label(senframe, text="Shortname:").place(x=210, y=95)
+Label(senframe, text="Longname:").place(x=210, y=120)
 
-isenid = Entry(seninfo).grid(column=2, row=3)
-Entry(seninfo).grid(column=2, row=4)
-Entry(seninfo).grid(column=2, row=5)
-Entry(seninfo).grid(column=2, row=6)
+isenid = Entry(senframe)
+isenid.place(x=300, y=45, width=300)
+iurn = Entry(senframe)
+iurn.place(x=300, y=70, width=300)
+ishortname = Entry(senframe)
+ishortname.place(x=300, y=95, width=300)
+ilongname = Entry(senframe)
+ilongname.place(x=300, y=120, width=300)
 
 #login frame
 loginframe = Frame(root)
 loginframe.grid(column=0, row=0)
 
+
+tw.bind('<ButtonRelease-1>', selectItem)
 
 root.mainloop()
 
