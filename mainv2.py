@@ -1,8 +1,8 @@
 import json
 import logging
-import tkinter as tk
-from tkinter import *
+
 from tkinter import ttk
+import tkinter as tk
 from tkcalendar import *
 import requests
 import re
@@ -20,75 +20,6 @@ def searchbyid():
         setMeta(sensor)
     except Exception as ex:
         print(ex)
-
-def selectdate(self, time=0):
-    if self == "start":
-        date = Toplevel(root)
-        date.title("Select Date")
-        date.geometry("600x400")
-        Label(date, text="Select event start date").pack()
-        cal = Calendar(date, selectmode="day")
-        cal.pack()
-
-        hour_string = ''
-        min_string = ''
-        sec_string = ''
-
-
-        hour = ttk.Spinbox(
-            date,
-            from_=0,
-            to=23,
-            wrap=True,
-            textvariable=hour_string,
-            width=2,
-            state="readonly",
-            justify=CENTER
-        )
-        minute = Spinbox(
-            date,
-            from_=0,
-            to=59,
-            wrap=True,
-            textvariable=min_string,
-            width=2,
-            justify=CENTER
-        )
-
-        second = Spinbox(
-            date,
-            from_=0,
-            to=59,
-            wrap=True,
-            textvariable=sec_string,
-            width=2,
-            justify=CENTER
-        )
-        hour.pack()
-        minute.pack()
-        second.pack()
-
-        h_string = hour.get()
-        m_string = minute.get()
-        s_string = second.get()
-
-        if len(hour.get()) < 2:
-            h_string = str(0) + hour.get()
-        if len(minute.get()) < 2:
-            m_string = str(0) + minute.get()
-        if len(second.get()) < 2:
-            s_string = str(0) + second.get()
-
-        timestring = f"{h_string}:{m_string}:{s_string}"
-
-        Button(date, text="Set Date", command=lambda: selectdate(cal.get_date(), timestring)).pack()
-    if self == "end":
-        pass
-    else:
-        print(self, time)
-        pass
-
-
 
 def setMeta(sensor):
     """this function sets the meta information in the sensor information frame to the current sensor used"""
@@ -164,9 +95,9 @@ style = ttk.Style()
 style.theme_use("clam")
 
 # sensor frame is the information and select screen of the sensor
-senframe = Frame(root)
+senframe = ttk.Frame(root)
 senframe.place(x=0, y=0, height=360, width=640, bordermode="inside")
-Label(senframe, text="Sensor Event Manager").grid(column=0, row=0)
+ttk.Label(senframe, text="Sensor Event Manager").grid(column=0, row=0)
 tw = ttk.Treeview(senframe, columns="c1", cursor="hand1")
 tw.place(x=0, y=25, width=200, height=330)
 tw.heading(column="c1", text="Collections")
@@ -186,29 +117,29 @@ for ix, col in enumerate(collections):
     for iix, item in enumerate(items):
         tw.insert(main, index=iix, text=item["shortName"], values=item["id"])
 
-searchidbutton = Button(senframe, command=searchbyid, width=20, text="Search by ID")
+searchidbutton = ttk.Button(senframe, command=searchbyid, width=20, text="Search by ID")
 searchidbutton.place(x=500, y=0, width=130)
-senid = Entry(senframe, width=40, borderwidth=3)
+senid = ttk.Entry(senframe, width=40)
 senid.place(x=200, y=0, width=300)
 
-Label(senframe, text="Data of selcted sensor").place(x=200, y=25)
+ttk.Label(senframe, text="Data of selcted sensor").place(x=200, y=25)
 
-Label(senframe, text="SensorID:").place(x=210, y=45)
-Label(senframe, text="URN:").place(x=210, y=70)
-Label(senframe, text="Shortname:").place(x=210, y=95)
-Label(senframe, text="Longname:").place(x=210, y=120)
+ttk.Label(senframe, text="SensorID:").place(x=210, y=45)
+ttk.Label(senframe, text="URN:").place(x=210, y=70)
+ttk.Label(senframe, text="Shortname:").place(x=210, y=95)
+ttk.Label(senframe, text="Longname:").place(x=210, y=120)
 
-isenid = Entry(senframe)
+isenid = ttk.Entry(senframe)
 isenid.place(x=300, y=45, width=300)
-iurn = Entry(senframe)
+iurn = ttk.Entry(senframe)
 iurn.place(x=300, y=70, width=300)
-ishortname = Entry(senframe)
+ishortname = ttk.Entry(senframe)
 ishortname.place(x=300, y=95, width=300)
-ilongname = Entry(senframe)
+ilongname = ttk.Entry(senframe)
 ilongname.place(x=300, y=120, width=300)
 
 # login frame
-loginframe = Frame(root)
+loginframe = ttk.Frame(root)
 loginframe.grid(column=0, row=0)
 
 # default button binds
