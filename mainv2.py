@@ -1,23 +1,23 @@
+import datetime
 import json
 import logging
+import requests
 import tkinter as tk
 from tkinter import ttk
-import time
-import datetime
 
 ti = str(datetime.datetime.utcnow())
 ti = ti[0:10] + "T"+ ti[11:19]
 
-
-# from tkcalendar import *
-import requests
 
 # import re
 
 # global variables
 sensor = ''  # sensor object from api (json)
 startisend = bool
-
+eventtypefromdd = ''
+def geteventtype(self):
+    global eventtypefromdd
+    eventtypefromdd = int(''.join(list(filter(str.isdigit, clicked.get()))))
 
 def searchbyid(event=None):
     """this function searches for a sensor by its id"""
@@ -111,11 +111,15 @@ def login():
 def getupdate(a=None):
     # get current data from entry boxes and save in dictonary
     # eventdata["deviceid"] = sensor["id"]
-    eventdata["desctiption"] = indescription.get(1.0, "end")
+    eventdata["description"] = indescription.get(1.0, "end")
     eventdata["longitude"] = inlongintude.get()
     eventdata["latitude"] = inlatitude.get()
     eventdata["altitude"] = inelevation.get()
     eventdata["label"] = inlabel.get()
+    eventdata["deviceid"] = senid.get()
+    eventdata["startdate"] = instart.get()
+    eventdata["enddate"] = inend.get()
+    eventdata["eventtype"] = eventtypefromdd
     # update informations in upload frame
     #updateuploadinfo()
 
@@ -146,9 +150,31 @@ def errorwin(error):
     ttk.Label(errwin, text="Error:", font="Calibri 20").place(x=0, y=0)
     ttk.Label(errwin, text=error, font="Calibri 12").place(x=0, y=30)
     ttk.Button(errwin, text="OK", command=errwin.destroy).place(x=50, y=100)
-
+def upload():
+    """Here the data gets actually uploaded via api"""
+    pass
 def confirm():
     """Function to open a confirm window on upload begin"""
+    getupdate()
+    cwin = tk.Toplevel(root)
+    cwin.geometry("700x500")
+    cframe = ttk.Frame(cwin)
+    cframe.place(x=0, y=0, width=1000, height=1000)
+    ttk.Label(cframe, text="You are about to upload following action to SENSOR.awi.de").place(x=0, y=0)
+    ttk.Label(cframe, text=f"DeviceID: {eventdata['deviceid']}").place(x=0, y=30)
+    ttk.Label(cframe, text=f"Label: {eventdata['label']}").place(x=0, y=60)
+    ttk.Label(cframe, text=f"Start Date: {eventdata['startdate']}").place(x=0, y=90)
+    ttk.Label(cframe, text=f"End Date: {eventdata['enddate']}").place(x=0, y=120)
+    ttk.Label(cframe, text=f"Event Type: {eventdata['eventtype']}").place(x=0, y=150)
+    ttk.Label(cframe, text=f"Longitude: {eventdata['longitude']}").place(x=0, y=180)
+    ttk.Label(cframe, text=f"Latitude: {eventdata['latitude']}").place(x=0, y=210)
+    ttk.Label(cframe, text=f"Altitude: {eventdata['altitude']}").place(x=0, y=240)
+    ttk.Label(cframe, text=f"Description: {eventdata['description']}").place(x=0, y=270)
+    ttk.Label(cframe, text="Please be aware that this action can't be undone by this program and need to be undone through the web interface").place(x=0, y=430)
+
+    ttk.Button(cframe, text="Im sure, go upload", command=upload).place(x=300, y=450)
+    ttk.Button(cframe, text="STOP", command=cwin.destroy).place(x=200, y=450)
+
     pass
 # defining the root window
 root = tk.Tk()
@@ -241,10 +267,13 @@ for ix, ev in enumerate(events):
     print(ix)
     print(ev["generalName"])
     possibevents.append(ev["generalName"] + " (" + str(ev["id"]) + ")")
-ttk.Label(evframe, text="Event Data").place(x=0, y=0)
+ttk.Style.configure(style, "l.Label", font=(None, 20))
+ttk.Label(evframe, text="Enter event data below", style="l.Label").place(x=0, y=0)
+
+
 
 # dropdown for possible events from api
-dd = ttk.OptionMenu(evframe, clicked, *possibevents)
+dd = ttk.OptionMenu(evframe, clicked, *possibevents, command=geteventtype)
 dd.place(x=80, y=50, width=400)
 
 # input entry box description
@@ -350,7 +379,7 @@ eventdata = {
     "deviceid": "",
     "startdate": "",
     "enddate": "",
-    "desctiption": "",
+    "description": "",
     "label": "",
     "eventtype": "",
     "longitude": "",
