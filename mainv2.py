@@ -2,13 +2,16 @@ import json
 import logging
 import tkinter as tk
 from tkinter import ttk
+
 # from tkcalendar import *
 import requests
+
 # import re
 
 # global variables
-sensor = '' # sensor object from api (json)
+sensor = ''  # sensor object from api (json)
 startisend = bool
+
 
 def searchbyid(event=None):
     """this function searches for a sensor by its id"""
@@ -21,8 +24,9 @@ def searchbyid(event=None):
         setMeta(sensor)
         getupdate()
     except ValueError as ex:
-       x = "Input outside of search zone"
-       errorwin(x)
+        x = "Input outside of search zone"
+        errorwin(x)
+
 
 def setMeta(sensor):
     """this function sets the meta information in the sensor information frame to the current sensor used"""
@@ -88,42 +92,37 @@ def login():
         logging.error("Communication error to sensor.awi.de: {}".format(e))
 
 
-
-
 def getupdate(a=None):
-    try:
-        eventdata["deviceid"] = str(sensor["id"])
-    except Exception as ex:
-        print(ex)
-    try:
-        eventdata["desctiption"] = indescription.get(0, tk.END)
-    except Exception as ex:
-        print(ex)
-    try:
-        eventdata["longitude"] = inlongintude.get()
-    except Exception as ex:
-        print(ex)
-    try:
-        eventdata["latitude"] = inlatitude.get()
-    except Exception as ex:
-        print(ex)
-    try:
-        eventdata["elevation"] = inelevation.get()
-    except Exception as ex:
-        print(ex)
-    try:
-        eventdata["label"] = inlabel.get()
-    except Exception as ex:
-        print(ex)
-    try:
-        updateuploadinfo()
-    except Exception as ex:
-        print(ex)
+    # get current data from entry boxes and save in dictonary
+    # eventdata["deviceid"] = sensor["id"]
+    eventdata["desctiption"] = indescription.get(1.0, "end")
+    eventdata["longitude"] = inlongintude.get()
+    eventdata["latitude"] = inlatitude.get()
+    eventdata["altitude"] = inelevation.get()
+    eventdata["label"] = inlabel.get()
+    # update informations in upload frame
+    updateuploadinfo()
+
 
 def updateuploadinfo():
     upid.delete(0, tk.END)
     upid.insert(0, eventdata["deviceid"])
+    updesc.delete(0, tk.END)
+    updesc.insert(0, eventdata["desctiption"])
+    uplong.delete(0, "end")
+    uplong.insert(0, eventdata["longitude"])
+    uplat.delete(0, tk.END)
+    uplat.insert(0, eventdata["latitude"])
+    uplab.delete(0, "end")
+    uplab.insert(0, eventdata["label"])
+    upel.delete(0, "end")
+    upel.insert(0, eventdata["altitude"])
+    uptype.delete(0, tk.END)
+    uptype.insert(0, eventdata["eventtype"])
+
+
 def errorwin(error):
+    """function for creating error message boxes"""
     errwin = tk.Toplevel()
     errwin.resizable(False, False)
     err = ttk.Frame(errwin)
@@ -132,18 +131,16 @@ def errorwin(error):
     ttk.Label(errwin, text=error, font="Calibri 12").place(x=0, y=30)
     ttk.Button(errwin, text="OK", command=errwin.destroy).place(x=50, y=100)
 
-# defining the root window
 
+# defining the root window
 root = tk.Tk()
 root.title("Event Writer")
 root.geometry("1280x720")
 root.config(bg="#07ace7")
-
 style = ttk.Style()
 style.theme_use("clam")
 
-# sensor frame is the information and select screen of the sensor
-
+# information and selection of sensor
 senframe = ttk.Frame(root)
 senframe.place(x=0, y=0, height=360, width=640, bordermode="inside")
 
@@ -153,12 +150,9 @@ tw = ttk.Treeview(senframe, columns="c1", cursor="hand1")
 tw.place(x=0, y=25, width=200, height=330)
 tw.heading(column="c1", text="Collections")
 
-#scrollbar for treeview
+# scrollbar for treeview
 twsb = ttk.Scrollbar(senframe, orient="vertical", command=tw.yview, cursor="double_arrow")
 twsb.place(x=200, y=25, width=20, height=330, anchor="ne")
-
-
-
 
 searchidbutton = ttk.Button(senframe, command=searchbyid, width=20, text="Search by ID")
 searchidbutton.place(x=500, y=0, width=130)
@@ -173,7 +167,6 @@ ttk.Label(senframe, text="SensorID:").place(x=210, y=45)
 ttk.Label(senframe, text="URN:").place(x=210, y=70)
 ttk.Label(senframe, text="Shortname:").place(x=210, y=95)
 ttk.Label(senframe, text="Longname:").place(x=210, y=120)
-
 
 isenid = ttk.Entry(senframe)
 isenid.place(x=300, y=45, width=300)
@@ -194,7 +187,7 @@ collections = collections.json()
 for ix, col in enumerate(collections):
     print(ix)
     print(col["collectionName"])
-    #get sensors from api
+    # get sensors from api
     items = requests.get(f"https://sandbox.sensor.awi.de/rest/sensors/collections/getItemsOfCollection/{col['id']}")
     items = items.json()
     main = tw.insert('', index=ix, text=col["collectionName"])
@@ -231,8 +224,7 @@ for ix, ev in enumerate(events):
     possibevents.append(ev["generalName"] + " (" + str(ev["id"]) + ")")
 ttk.Label(evframe, text="Event Data").place(x=0, y=0)
 
-
-#dropdown for possible events from api
+# dropdown for possible events from api
 dd = ttk.OptionMenu(evframe, clicked, *possibevents)
 dd.place(x=210, y=50, width=250)
 
@@ -241,18 +233,24 @@ ttk.Label(evframe, text="Label:").place(x=0, y=60)
 ttk.Label(evframe, text="Description:").place(x=0, y=200)
 ttk.Label(evframe, text="Longitude:").place(x=0, y=110)
 ttk.Label(evframe, text="Latitude:").place(x=0, y=135)
-ttk.Label(evframe, text="Elevation:").place(x=0, y=160)
+ttk.Label(evframe, text="Altitude:").place(x=0, y=160)
 
-
-#event input boxes
+# event input boxes
 inlabel = ttk.Entry(evframe)
 inlabel.place(x=80, y=60)
+inlabel.bind("<Any-KeyPress>", getupdate)
+
 inlongintude = ttk.Entry(evframe)
 inlongintude.place(x=80, y=110)
+inlongintude.bind("<Any-KeyPress>", getupdate)
+
 inlatitude = ttk.Entry(evframe)
 inlatitude.place(x=80, y=135)
+inlatitude.bind("<Any-KeyPress>", getupdate)
+
 inelevation = ttk.Entry(evframe)
 inelevation.place(x=80, y=160)
+inelevation.bind("<Any-KeyPress>", getupdate)
 
 indescription = tk.Text(evframe, font=("Calibri 10"))
 indescription.place(x=80, y=200, width=400, height=300)
@@ -286,11 +284,10 @@ ttk.Label(upframe, text="Label: ").place(x=0, y=125)
 ttk.Label(upframe, text="EventType: ").place(x=0, y=150)
 ttk.Label(upframe, text="Longitude: ").place(x=0, y=175)
 ttk.Label(upframe, text="Latitude: ").place(x=0, y=200)
-ttk.Label(upframe, text="Elevation: ").place(x=0, y=225)
-
+ttk.Label(upframe, text="Altitude: ").place(x=0, y=225)
 
 upid.place(x=75, y=25, width=300)
-upstart = ttk.Entry(upframe, state=tk.DISABLED)
+upstart = ttk.Entry(upframe)
 upstart.place(x=75, y=50, width=300)
 upend = ttk.Entry(upframe)
 upend.place(x=75, y=75, width=300)
@@ -308,15 +305,15 @@ upel = ttk.Entry(upframe)
 upel.place(x=75, y=225, width=300)
 
 eventdata = {
-"deviceid": "",
-"startdate": "",
-"enddate": "",
-"desctiption": "",
-"label": "",
-"eventtype": "",
-"longitude": "",
-"latitude": "",
-"elevation": ""
+    "deviceid": "",
+    "startdate": "",
+    "enddate": "",
+    "desctiption": "",
+    "label": "",
+    "eventtype": "",
+    "longitude": "",
+    "latitude": "",
+    "altitude": ""
 }
 
 """
@@ -337,7 +334,5 @@ eventdata = {
                 "id": None
             }
 """
-
-
 
 root.mainloop()
