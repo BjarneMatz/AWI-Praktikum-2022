@@ -45,8 +45,10 @@ except Exception as ex:
     print(ex)
 
 headers = {"Content-Type": "application/json"}
-url = "https://sandbox.sensor.awi.de/rest/sensors/events/putEvent/10867"
+url = "https://sandbox.sensor.awi.de/rest/sensors/events/putEvent/10867?createVersion=false"
 response = requests.put(url, data=json.dumps(eventdata), headers=headers, cookies={'x-auth-token': token})
+
+
 print("RAW Python Data: " + str(eventdata))
 print("JSON Dump: " + json.dumps(eventdata))
 print(response)
