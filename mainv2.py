@@ -2,6 +2,7 @@ import json
 import logging
 import tkinter as tk
 from tkinter import ttk
+import time
 
 # from tkcalendar import *
 import requests
@@ -30,6 +31,11 @@ def searchbyid(event=None):
 
 def setMeta(sensor):
     """this function sets the meta information in the sensor information frame to the current sensor used"""
+
+    isenid.config(state=tk.NORMAL)
+    iurn.config(state=tk.NORMAL)
+    ishortname.config(state=tk.NORMAL)
+    ilongname.config(state=tk.NORMAL)
     isenid.delete(0, "end")
     iurn.delete(0, "end")
     ishortname.delete(0, "end")
@@ -38,6 +44,11 @@ def setMeta(sensor):
     iurn.insert(0, sensor['urn'])
     ishortname.insert(0, sensor["shortName"])
     ilongname.insert(0, sensor["longName"])
+    isenid.config(state=tk.DISABLED)
+    iurn.config(state=tk.DISABLED)
+    ishortname.config(state=tk.DISABLED)
+    ilongname.config(state=tk.DISABLED)
+
 
 
 def selectItem(a=None):
@@ -334,6 +345,25 @@ eventdata = {
                 "elevationInMeter": operation["altitude"],
                 "id": None
             }
+{
+            "itemID": 10867,
+            "inheritToAllChildren": "false",
+            "inheritToChildren" : [],
+            "event": {
+                "startDate": 1,
+                "endDate": 1,
+                "label": "Test",
+                "description": "Testdesc",
+                "eventType":  53,
+                "latitude": 0,
+                "longitude": 0,
+                "elevationInMeter": 0,
+                "id": None
+            }
+
+
+
+
 """
 
 root.mainloop()
