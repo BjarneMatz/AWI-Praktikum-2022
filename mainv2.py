@@ -1,11 +1,13 @@
 import json
 import logging
 
-from tkinter import ttk
+
+
 import tkinter as tk
-from tkcalendar import *
+from tkinter import ttk
+#from tkcalendar import *
 import requests
-import re
+#import re
 
 def searchbyid():
     """this function searches for a sensor by its id"""
@@ -103,7 +105,7 @@ tw.place(x=0, y=25, width=200, height=330)
 tw.heading(column="c1", text="Collections")
 
 twsb = ttk.Scrollbar(senframe, orient="vertical", command=tw.yview, cursor="double_arrow")
-twsb.place(x=200, y=25, width=20, height=330, anchor=NE)
+twsb.place(x=200, y=25, width=20, height=330, anchor="ne")
 
 collections = requests.get("https://sandbox.sensor.awi.de/rest/sensors/collections/getAllCollections")
 collections = collections.json()
@@ -144,32 +146,31 @@ loginframe.grid(column=0, row=0)
 
 # default button binds
 tw.bind('<ButtonRelease-1>', selectItem)
-
 finalevent = str
 
 def geteventinfo():
     pass
 
 
-startisend = ''
+startisend = bool
 
 
 def samedate():
     global startisend
     print(c_samedate_state.get())
     if c_samedate_state.get() == 0:
-        enddateentry.config(state=NORMAL)
+        enddateentry.config(state="NORMAL")
         startisend = False
     if c_samedate_state.get() == 1:
-        enddateentry.config(state=DISABLED)
+        enddateentry.config(state=tk.DISABLED)
         startisend = True
 
-evframe = Frame(root)
+evframe = ttk.Frame(root)
 evframe.place(x=640, y=0, height=720, width=640)
 
 events = requests.get("https://sandbox.sensor.awi.de/rest/sensors/events/getAllEventTypes")
 events = events.json()
-clicked = StringVar()
+clicked = tk.StringVar()
 clicked.set("Select Event")
 possibevents = []
 
@@ -178,36 +179,36 @@ for ix, ev in enumerate(events):
     print(ev["generalName"])
     possibevents.append(ev["generalName"] + " (" + str(ev["id"]) + ")")
 
-Label(evframe, text="Event Data").place(x=0, y=0)
+ttk.Label(evframe, text="Event Data").place(x=0, y=0)
 dd = tk.OptionMenu(evframe, clicked, *possibevents)
 print(possibevents)
 dd.place(x=210, y=50, width=250)
 
-Label(evframe, text="Label").place(x=0, y=60)
-Label(evframe, text="Description").place(x=0, y=85)
-Label(evframe, text="Longitude").place(x=0, y=110)
-Label(evframe, text="Latitude").place(x=0, y=135)
-Label(evframe, text="Elevation").place(x=0, y=160)
+ttk.Label(evframe, text="Label").place(x=0, y=60)
+ttk.Label(evframe, text="Description").place(x=0, y=85)
+ttk.Label(evframe, text="Longitude").place(x=0, y=110)
+ttk.Label(evframe, text="Latitude").place(x=0, y=135)
+ttk.Label(evframe, text="Elevation").place(x=0, y=160)
 
-inlabel = Entry(evframe)
+inlabel = ttk.Entry(evframe)
 inlabel.place(x=80, y=60)
-indescription = Entry(evframe)
+indescription = ttk.Entry(evframe)
 indescription.place(x=80, y=85)
 
 #Button(evframe, text="Set Start Date", command=lambda: selectdate("start")).place(x=100, y=200)
-startdateentry = Entry(evframe)
+startdateentry = ttk.Entry(evframe)
 startdateentry.place(x=380, y=110, width=130)
-enddateentry = Entry(evframe)
+enddateentry = ttk.Entry(evframe)
 enddateentry.place(x=380, y=135, width=130)
-Label(evframe, text="Start Date (format sensetive!): ").place(x=200, y=110)
-Label(evframe, text="End Date (format sensetive!): ").place(x=200, y=135)
-c_samedate_state = Variable()
-c_samedate = Checkbutton(evframe, variable=c_samedate_state, text="Same start and end date", onvalue=1, offvalue=0, command=samedate)
+ttk.Label(evframe, text="Start Date (format sensetive!): ").place(x=200, y=110)
+ttk.Label(evframe, text="End Date (format sensetive!): ").place(x=200, y=135)
+c_samedate_state = tk.Variable()
+c_samedate = ttk.Checkbutton(evframe, variable=c_samedate_state, text="Same start and end date", onvalue=1, offvalue=0, command=samedate)
 c_samedate.place(x=200, y=160)
-c_samedate.deselect()
+#c_samedate.deselect()
 
 
-upframe = Frame(root)
+upframe = ttk.Frame(root)
 upframe.place(x=0, y=360, width=640, height=360)
 
 eventdata = {
@@ -222,16 +223,16 @@ eventdata = {
     "elevation": ""
 }
 
-Label(upframe, text="Following data will be uploaded to SENSOR:")
-Label(upframe, text="DeviceID: ")
-Label(upframe, text="StartDate: ")
-Label(upframe, text="EndDate ")
-Label(upframe, text="Description ")
-Label(upframe, text="Label: ")
-Label(upframe, text="EventType ")
-Label(upframe, text="Longitude: ")
-Label(upframe, text="Latitude: ")
-Label(upframe, text="Elevation: ")
+ttk.Label(upframe, text="Following data will be uploaded to SENSOR:")
+ttk.Label(upframe, text="DeviceID: ")
+ttk.Label(upframe, text="StartDate: ")
+ttk.Label(upframe, text="EndDate ")
+ttk.Label(upframe, text="Description ")
+ttk.Label(upframe, text="Label: ")
+ttk.Label(upframe, text="EventType ")
+ttk.Label(upframe, text="Longitude: ")
+ttk.Label(upframe, text="Latitude: ")
+ttk.Label(upframe, text="Elevation: ")
 
 
 
