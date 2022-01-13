@@ -38,16 +38,19 @@ try:
 
     if response.status_code != 200:
         raise Exception('Could not login. {} Status code: {}'.format(response.text, response.status_code))
+    else:
+        print("Login Successful!")
+        print("logged in as: " + str(username) + " | " + str(password))
     token = response.cookies['x-auth-token']
-    print(response.status_code)
-    print("Token: " + token)
+    print("Response: " + str(response.status_code))
+    print("Cookie Token: " + token)
 except Exception as ex:
     print(ex)
+    token = ''
 
 headers = {"Content-Type": "application/json"}
 url = "https://sandbox.sensor.awi.de/rest/sensors/events/putEvent/10867?createVersion=false"
 response = requests.put(url, data=json.dumps(eventdata), headers=headers, cookies={'x-auth-token': token})
-
 
 print("RAW Python Data: " + str(eventdata))
 print("JSON Dump: " + json.dumps(eventdata))

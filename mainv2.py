@@ -3,6 +3,11 @@ import logging
 import tkinter as tk
 from tkinter import ttk
 import time
+import datetime
+
+ti = str(datetime.datetime.utcnow())
+ti = ti[0:10] + "T"+ ti[11:19]
+
 
 # from tkcalendar import *
 import requests
@@ -142,7 +147,9 @@ def errorwin(error):
     ttk.Label(errwin, text=error, font="Calibri 12").place(x=0, y=30)
     ttk.Button(errwin, text="OK", command=errwin.destroy).place(x=50, y=100)
 
-
+def confirm():
+    """Function to open a confirm window on upload begin"""
+    pass
 # defining the root window
 root = tk.Tk()
 root.title("Event Writer")
@@ -229,6 +236,7 @@ events = events.json()
 clicked = tk.StringVar()
 clicked.set("Select Event")
 possibevents = []
+possibevents.append("Select Event")
 for ix, ev in enumerate(events):
     print(ix)
     print(ev["generalName"])
@@ -237,18 +245,22 @@ ttk.Label(evframe, text="Event Data").place(x=0, y=0)
 
 # dropdown for possible events from api
 dd = ttk.OptionMenu(evframe, clicked, *possibevents)
-dd.place(x=210, y=50, width=250)
+dd.place(x=80, y=50, width=400)
 
 # input entry box description
-ttk.Label(evframe, text="Label:").place(x=0, y=60)
+ttk.Label(evframe, text="Label:").place(x=0, y=85)
 ttk.Label(evframe, text="Description:").place(x=0, y=200)
 ttk.Label(evframe, text="Longitude:").place(x=0, y=110)
 ttk.Label(evframe, text="Latitude:").place(x=0, y=135)
 ttk.Label(evframe, text="Altitude:").place(x=0, y=160)
 
+ttk.Label(evframe, text="Start Time:").place(x=250, y=110)
+ttk.Label(evframe, text="End Time:").place(x=250, y=135)
+ttk.Label(evframe, text="Attention: Format sensetive | UTC timezone").place(x=250, y=160)
+
 # event input boxes
 inlabel = ttk.Entry(evframe)
-inlabel.place(x=80, y=60)
+inlabel.place(x=80, y=85)
 inlabel.bind("<Any-KeyPress>", getupdate)
 
 inlongintude = ttk.Entry(evframe)
@@ -263,9 +275,23 @@ inelevation = ttk.Entry(evframe)
 inelevation.place(x=80, y=160)
 inelevation.bind("<Any-KeyPress>", getupdate)
 
+instart = ttk.Entry(evframe)
+instart.place(x=350, y=110)
+instart.bind("<Any-KeyPress>", getupdate)
+instart.insert(0, ti)
+
+inend = ttk.Entry(evframe)
+inend.place(x=350, y=135)
+inend.bind("<Any-KeyPress>", getupdate)
+inend.insert(0, ti)
+
+
+
 indescription = tk.Text(evframe, font=("Calibri 10"))
 indescription.place(x=80, y=200, width=400, height=300)
 indescription.bind("<Any-KeyPress>", getupdate)
+
+
 """
 # old time function; maybe reusable
 
@@ -284,7 +310,11 @@ c_samedate.place(x=200, y=160)
 
 upframe = ttk.Frame(root)
 upframe.place(x=0, y=360, width=640, height=360)
-upid = ttk.Entry(upframe)
+
+ttk.Button(upframe, text="Upload to SENSOR", command=confirm, style="b.TButton").place(x=30, y=30, width=500, height=250)
+ttk.Style.configure(style, "b.TButton", font=(None, 30))
+
+
 """
 ttk.Label(upframe, text="Following data will be uploaded to SENSOR:").place(x=0, y=0)
 ttk.Label(upframe, text="DeviceID: ").place(x=0, y=25)
