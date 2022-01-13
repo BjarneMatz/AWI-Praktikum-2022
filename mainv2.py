@@ -101,9 +101,9 @@ def getupdate(a=None):
     eventdata["altitude"] = inelevation.get()
     eventdata["label"] = inlabel.get()
     # update informations in upload frame
-    updateuploadinfo()
+    #updateuploadinfo()
 
-
+"""
 def updateuploadinfo():
     upid.delete(0, tk.END)
     upid.insert(0, eventdata["deviceid"])
@@ -119,7 +119,7 @@ def updateuploadinfo():
     upel.insert(0, eventdata["altitude"])
     uptype.delete(0, tk.END)
     uptype.insert(0, eventdata["eventtype"])
-
+"""
 
 def errorwin(error):
     """function for creating error message boxes"""
@@ -274,7 +274,7 @@ c_samedate.place(x=200, y=160)
 upframe = ttk.Frame(root)
 upframe.place(x=0, y=360, width=640, height=360)
 upid = ttk.Entry(upframe)
-
+"""
 ttk.Label(upframe, text="Following data will be uploaded to SENSOR:").place(x=0, y=0)
 ttk.Label(upframe, text="DeviceID: ").place(x=0, y=25)
 ttk.Label(upframe, text="StartDate: ").place(x=0, y=50)
@@ -303,6 +303,7 @@ uplat = ttk.Entry(upframe)
 uplat.place(x=75, y=200, width=300)
 upel = ttk.Entry(upframe)
 upel.place(x=75, y=225, width=300)
+"""
 
 eventdata = {
     "deviceid": "",
