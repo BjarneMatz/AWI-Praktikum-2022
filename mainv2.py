@@ -340,7 +340,6 @@ ttk.Label(evframe, text="Description:").place(x=0, y=350)
 ttk.Label(evframe, text="Longitude:").place(x=0, y=160)
 ttk.Label(evframe, text="Latitude:").place(x=250, y=160)
 ttk.Label(evframe, text="Altitude:").place(x=0, y=185)
-
 ttk.Label(evframe, text="Start Time:").place(x=0, y=110)
 ttk.Label(evframe, text="End Time:").place(x=250, y=110)
 ttk.Label(evframe, text="Attention: Format sensetive | UTC timezone").place(x=80, y=135)
@@ -366,15 +365,17 @@ inend = ttk.Entry(evframe)
 inend.place(x=350, y=110)
 inend.insert(0, ti)
 
+ttk.Button(evframe, text="Get location by name search", command=locationTop).place(x=80, y=210, width=400)
+
 indescription = tk.Text(evframe, font=("Calibri 10"))
 indescription.place(x=80, y=350, width=400, height=300)
 
-ttk.Button(evframe, text="Get location by name search", command=locationTop).place(x=80, y=210, width=400)
+
 
 # frame bottom left, simply holds upload button in place
 upframe = ttk.Frame(root)
 upframe.place(x=0, y=360, width=640, height=360)
-ttk.Button(upframe, text="Upload to SENSOR", command=confirm, style="b.TButton").place(x=30, y=30, width=500,                                                                                   height=250)
+ttk.Button(upframe, text="Upload to SENSOR", command=confirm, style="b.TButton").place(x=30, y=30, width=500, height=250)
 ttk.Style.configure(style, "b.TButton", font=(None, 30))
 
 # event data dictionary that holds data until upload
@@ -390,43 +391,7 @@ eventdata = {
     "altitude": ""
 }
 
-"""
-def get_eventdata():
-eventdata = {
-            "itemID": sensor["id"],
-            "inheritToAllChildren": "false",
-            "inheritToChildren" : [],
-            "event": {
-                "startDate":operation["timestamp"],
-                "endDate":operation["timestamp"],
-                "label": operation["label"],
-                "description": operation["comment"],
-                "eventType":  device_operation_ids[operation["action"]],
-                "latitude":operation["latitude"],
-                "longitude":operation["longitude"],
-                "elevationInMeter": operation["altitude"],
-                "id": None
-            }
-{
-            "itemID": 10867,
-            "inheritToAllChildren": "false",
-            "inheritToChildren" : [],
-            "event": {
-                "startDate": 1,
-                "endDate": 1,
-                "label": "Test",
-                "description": "Testdesc",
-                "eventType":  53,
-                "latitude": 0,
-                "longitude": 0,
-                "elevationInMeter": 0,
-                "id": None
-            }
-
-
-
-
-"""
-
+#login to sensor.awi.de on program startup
 login()
+#main program loop
 root.mainloop()
