@@ -1,9 +1,13 @@
 import datetime
 import json
 import logging
-import requests
 import tkinter as tk
 from tkinter import ttk
+from geopy.geocoders import Nominatim
+
+geolocation = Nominatim(user_agent="SENSOR-Event-Manger")
+
+import requests
 
 ti = str(datetime.datetime.utcnow())
 ti = ti[0:10] + "T" + ti[11:19]
@@ -16,7 +20,41 @@ startisend = bool
 eventtypefromdd = ''
 token = ''
 
+def getLocation(a=None):
+     try:
+        global geosearch
+        global locinfo
+        location = geolocation.geocode(geosearch.get())
+        print(location.address)
+        inlongintude.delete(0, "end")
+        inlatitude.delete(0, "end")
+        inelevation.delete(0, "end")
+        locinfo.delete('1.0', "end")
+        inlongintude.insert(0, location.longitude)
+        inlatitude.insert(0, location.latitude)
+        inelevation.insert(0, location.altitude)
+        locinfo.insert('1.0', location.address)
+     except Exception as ex:
+         print(ex)
+         locinfo.delete("1.0", "end")
+         locinfo.insert("1.0", "Error: Timeout / Location can not be found")
 
+
+
+def locationTop():
+    global geosearch
+    global locinfo
+    loc = tk.Toplevel()
+    ttk.Label(loc, text="Search location by name").grid(column=0, row=0, columnspan=3)
+    ttk.Label(loc, text="Enter Location Name:").grid(column=0, row=1)
+    locinfo = tk.Text(loc, width=50, height=10)
+    locinfo.grid(column=0, row=3, columnspan=3)
+    geosearch = ttk.Entry(loc, width=30)
+    geosearch.grid(column=1, row=1)
+    search_button = ttk.Button(loc, command=getLocation, text="Get Location")
+    search_button.grid(column=0, row=4, columnspan=2)
+    geosearch.bind("<Return>", getLocation)
+    search_button.bind("<Return>", getLocation)
 def geteventtype(a=None):
     global eventtypefromdd
     eventtypefromdd = int(''.join(list(filter(str.isdigit, clicked.get()))))
@@ -119,6 +157,7 @@ def errorwin(error):
     """function for creating error message boxes"""
     errwin = tk.Toplevel()
     errwin.resizable(False, False)
+    errwin.geometry("500x200")
     err = ttk.Frame(errwin)
     err.place(x=0, y=0, width=4000, height=2000)
     ttk.Label(errwin, text="Error:", font="Calibri 20").place(x=0, y=0)
@@ -129,7 +168,7 @@ def errorwin(error):
 def upload():
     """Here the data gets actually uploaded via api"""
     uploaddata = {
-        "itemID": int(eventdata['deviceid']),
+        "itemID": eventdata['deviceid'],
         "inheritToAllChildren": True,
         "inheritToChildren": [
             0
@@ -139,10 +178,10 @@ def upload():
             "endDate": f"{eventdata['enddate']}",
             "label": f"{eventdata['label']}",
             "description": f"{eventdata['description']}",
-            "eventType": int(eventdata["eventtype"]),
-            "longitude": int(eventdata['longitude']),
-            "latitude": int(eventdata['latitude']),
-            "elevationInMeter": int(eventdata["altitude"]),
+            "eventType": eventdata["eventtype"],
+            "longitude": eventdata['longitude'],
+            "latitude": eventdata['latitude'],
+            "elevationInMeter": eventdata["altitude"],
             "id": None
         }
     }
@@ -154,10 +193,15 @@ def upload():
     print(headers)
     print(json.dumps(uploaddata))
     print(response)
-
+    if response.status_code != 201:
+        errorwin("Transfer to SENSOR.awi.de was NOT successful!")
+        raise Exception("Transfer to SENSOR.awi.de was NOT successful!")
+    else:
+        cwin.destroy()
 
 def confirm():
     """Function to open a confirm window on upload begin"""
+    global cwin
     getupdate()
     cwin = tk.Toplevel(root)
     cwin.geometry("700x500")
@@ -269,45 +313,47 @@ dd.place(x=80, y=50, width=400)
 
 # input entry box description
 ttk.Label(evframe, text="Label:").place(x=0, y=85)
-ttk.Label(evframe, text="Description:").place(x=0, y=200)
-ttk.Label(evframe, text="Longitude:").place(x=0, y=110)
-ttk.Label(evframe, text="Latitude:").place(x=0, y=135)
-ttk.Label(evframe, text="Altitude:").place(x=0, y=160)
+ttk.Label(evframe, text="Description:").place(x=0, y=350)
+ttk.Label(evframe, text="Longitude:").place(x=0, y=160)
+ttk.Label(evframe, text="Latitude:").place(x=250, y=160)
+ttk.Label(evframe, text="Altitude:").place(x=0, y=185)
 
-ttk.Label(evframe, text="Start Time:").place(x=250, y=110)
-ttk.Label(evframe, text="End Time:").place(x=250, y=135)
-ttk.Label(evframe, text="Attention: Format sensetive | UTC timezone").place(x=250, y=160)
+ttk.Label(evframe, text="Start Time:").place(x=0, y=110)
+ttk.Label(evframe, text="End Time:").place(x=250, y=110)
+ttk.Label(evframe, text="Attention: Format sensetive | UTC timezone").place(x=80, y=135)
 
 # event input boxes
 inlabel = ttk.Entry(evframe)
-inlabel.place(x=80, y=85)
+inlabel.place(x=80, y=85, width=400)
 inlabel.bind("<Any-KeyPress>", getupdate)
 
 inlongintude = ttk.Entry(evframe)
-inlongintude.place(x=80, y=110)
+inlongintude.place(x=80, y=160)
 inlongintude.bind("<Any-KeyPress>", getupdate)
 
 inlatitude = ttk.Entry(evframe)
-inlatitude.place(x=80, y=135)
+inlatitude.place(x=350, y=160)
 inlatitude.bind("<Any-KeyPress>", getupdate)
 
 inelevation = ttk.Entry(evframe)
-inelevation.place(x=80, y=160)
+inelevation.place(x=80, y=185)
 inelevation.bind("<Any-KeyPress>", getupdate)
 
 instart = ttk.Entry(evframe)
-instart.place(x=350, y=110)
+instart.place(x=80, y=110)
 instart.bind("<Any-KeyPress>", getupdate)
 instart.insert(0, ti)
 
 inend = ttk.Entry(evframe)
-inend.place(x=350, y=135)
+inend.place(x=350, y=110)
 inend.bind("<Any-KeyPress>", getupdate)
 inend.insert(0, ti)
 
 indescription = tk.Text(evframe, font=("Calibri 10"))
-indescription.place(x=80, y=200, width=400, height=300)
+indescription.place(x=80, y=350, width=400, height=300)
 indescription.bind("<Any-KeyPress>", getupdate)
+
+ttk.Button(evframe, text="Get location by name search", command=locationTop).place(x=80, y=210, width=400)
 
 # frame bottom left, simply holds upload button in place
 upframe = ttk.Frame(root)

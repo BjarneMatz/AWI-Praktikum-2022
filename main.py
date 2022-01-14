@@ -5,138 +5,70 @@ import requests
 import time
 
 
-
-def uploadData():
-    pass
-
-
-def getData():
-    if id != '':
-        try:
-            sid = id.get()
-            sensor = requests.get(f"https://sandbox.sensor.awi.de/rest/sensors/device/getDevice/{sid}")
-            sensor = sensor.json()
-        except:
-            pass
-    elif id == '':
-        try:
-            print(twc.selection_get())
-        except:
-            pass
-    else:
-        changeText(logger, "Select a sensor through tree or by id search")
-        pass
-
-
-def changeText(box, string):
-    box.config(state=NORMAL)
-    box.insert(0, string)
-    box.config(state=DISABLED)
-def viewMeta():
-    pass
-
-
-def sensorActive():
-    pass
-
-
 # set root window
 root = tk.Tk()
 root.title("SENSOR Metadata Writer")
 root.geometry("1280x720")
 root.config(bg="#07ace7")
 
-# set frames of main window
-header = tk.Frame(root)
-footer = tk.Frame(root)
-sensorinfo = tk.Frame(root)
-data = tk.Frame(root)
-upload = tk.Frame(root)
-sensorlib = tk.Frame(root)
+evframe = ttk.Frame(root)
+evframe.place(x=0, y=0)
+def getupdate():
+    pass
+def locationTop():
+    pass
+ti = 'time'
+#ttk.Label(evframe, text="Enter event data below", style="l.Label").place(x=0, y=0)
 
-sensorinfo.grid(column=0, row=1)
-data.grid(column=1, row=1)
-upload.grid(column=2, row=1)
-sensorlib.grid(column=3, row=1)
+# dropdown for possible events from api
+#dd = ttk.OptionMenu(evframe, clicked, *possibevents, command=geteventtype)
+#dd.place(x=80, y=50, width=400)
 
-header.grid(column=0, columnspan=3, row=0)
-footer.grid(column=0, row=2)
+# input entry box description
+ttk.Label(evframe, text="Label:").grid(column=0, row=1)
+ttk.Label(evframe, text="Description:").place()
+ttk.Label(evframe, text="Longitude:").place(x=0, y=110)
+ttk.Label(evframe, text="Latitude:").place(x=250, y=160)
+ttk.Label(evframe, text="Altitude:").place(x=0, y=160)
 
-header.config(bg="#0044FF")
-# ----HEADER----
-tk.Label(header, text="SENSOR Metadata Writer", bg="#0044FF").grid(column=0, columnspan=3, row=0)
+ttk.Label(evframe, text="Start Time:").grid(column=0, row=2)
+ttk.Label(evframe, text="End Time:").grid(column=2, row=2)
+ttk.Label(evframe, text="Attention: Format sensetive | UTC timezone").grid(column=0, columnspan=4, row=3)
 
-# ----SENSOR ID----
+# event input boxes
+inlabel = ttk.Entry(evframe)
+inlabel.grid(column=1, row=1, columnspan=3)
+inlabel.bind("<Any-KeyPress>", getupdate)
 
+inlongintude = ttk.Entry(evframe)
+inlongintude.place(x=80, y=135)
+inlongintude.bind("<Any-KeyPress>", getupdate)
 
-tk.Label(sensorinfo, text="Selected Sensor:").grid(column=0, row=4, columnspan=2)
-urn = tk.Entry(sensorinfo, width=80, state=DISABLED)
-urn.grid(column=1, row=5)
-tk.Label(sensorinfo, text="URN").grid(column=0, row=5)
-shortname = tk.Entry(sensorinfo, width=80, state=DISABLED)
-shortname.grid(column=1, row=6)
-tk.Label(sensorinfo, text="Short Name").grid(column=0, row=6)
-longname = tk.Entry(sensorinfo, width=80, state=DISABLED)
-longname.grid(column=1, row=7)
-tk.Label(sensorinfo, text="Long Name").grid(column=0, row=7)
+inlatitude = ttk.Entry(evframe)
+inlatitude.place(x=350, y=160)
+inlatitude.bind("<Any-KeyPress>", getupdate)
 
-metabutton = tk.Button(sensorinfo, text="view more metadata", command=viewMeta, state=DISABLED)
-metabutton.grid(column=0, columnspan=2,row=8)
+inelevation = ttk.Entry(evframe)
+inelevation.place(x=80, y=160)
+inelevation.bind("<Any-KeyPress>", getupdate)
 
-# ----UPLOAD----
-log = StringVar()
-logger = tk.Entry(upload, state=DISABLED)
-logger.grid(column=1, row=2)
-tk.Button(upload, text="Upload", command=uploadData).grid(column=1, row=1)
+instart = ttk.Entry(evframe)
+instart.grid(column=1, row=2)
+instart.bind("<Any-KeyPress>", getupdate)
+instart.insert(0, ti)
 
+inend = ttk.Entry(evframe)
+inend.grid(column=3, row=2)
+inend.bind("<Any-KeyPress>", getupdate)
+inend.insert(0, ti)
 
-# ----TREE SENSOR LIBRARY----
-twc = ttk.Treeview(sensorinfo, selectmode="browse",)
-twc.grid(column=0, row=2)
+indescription = tk.Text(evframe, font=("Calibri 10"))
+indescription.place(x=80, y=400, width=400, height=300)
+indescription.bind("<Any-KeyPress>", getupdate)
 
+geosearch = ttk.Entry(evframe)
+geosearch.place(x=80, y=200)
 
+ttk.Button(evframe, text="Get location by name search", command=locationTop).place(x=200, y=200)
 
-collections = requests.get(f"https://sensor.awi.de/rest/sensors/collections/getAllCollections")
-collections = collections.json()
-
-for ix, col in enumerate(collections):
-    print(ix)
-    print(col["collectionName"])
-    items = requests.get(f"https://sensor.awi.de/rest/sensors/collections/getItemsOfCollection/{col['id']}")
-    items = items.json()
-    main = twc.insert('', iid=ix, index=ix, text=col["collectionName"])
-    #time.sleep(2)
-    for iix, item in enumerate(items):
-        twc.insert(main, index=iix, text=item["shortName"])
-
-tk.Label(sensorinfo, text="Sensor Metadata").grid(column=0, row=0, columnspan=2)
-tk.Label(sensorinfo, text="Sensor ID:").grid(column=0, row=2)
-
-id = StringVar()
-tk.Entry(sensorinfo, width=10, textvariable=id, state=NORMAL).grid(column=0, row=0)
-tk.Button(sensorinfo, text="Load Sensor", width=30, command=getData).grid(column=3, columnspan=2, row=3)
-
-
-# ----DATA INPUT----
-tk.Label(data, text="Data2Write").grid(column=1, row=0, columnspan=2)
-input1 = StringVar()
-tk.Entry(data, textvariable=input1, state=DISABLED).grid(column=1, row=1)
-tk.Label(data, text="Data1:").grid(column=0, row=1)
-input1 = StringVar()
-tk.Entry(data, textvariable=input1, state=DISABLED).grid(column=1, row=2)
-tk.Label(data, text="Data2:").grid(column=0, row=2)
-input1 = StringVar()
-tk.Entry(data, textvariable=input1, state=DISABLED).grid(column=1, row=3)
-tk.Label(data, text="Data3:").grid(column=0, row=3)
-input1 = StringVar()
-tk.Entry(data, textvariable=input1, state=DISABLED).grid(column=1, row=4)
-tk.Label(data, text="Data4:").grid(column=0, row=4)
-input1 = StringVar()
-tk.Entry(data, textvariable=input1, state=DISABLED).grid(column=1, row=5)
-tk.Label(data, text="Data5:").grid(column=0, row=5)
-
-# ----FOOTER----
-
-
-# main program loop
 root.mainloop()
