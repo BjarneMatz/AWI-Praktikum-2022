@@ -210,8 +210,8 @@ def upload():
     print(json.dumps(uploaddata))
     print(response)
     if response.status_code != 201:
-        errorwin("Transfer to SENSOR.awi.de was NOT successful!")
-        raise Exception("Transfer to SENSOR.awi.de was NOT successful!")
+        errorwin("Transfer to SENSOR.awi.de FAILED!")
+        raise Exception("Transfer to SENSOR.awi.de FAILED!")
     else:
         cwin.destroy()
         fine = tk.Toplevel(root)
@@ -256,6 +256,7 @@ root = tk.Tk()
 root.title("Event Writer")
 root.geometry("1280x720")
 root.config(bg="#07ace7")
+root.resizable(False, False)
 style = ttk.Style()
 style.theme_use("clam")
 
