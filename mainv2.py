@@ -3,6 +3,7 @@ import json
 import logging
 import tkinter as tk
 from tkinter import ttk
+
 from geopy.geocoders import Nominatim
 
 geolocation = Nominatim(user_agent="SENSOR-Event-Manger")
@@ -22,7 +23,7 @@ token = ''
 
 
 def getLocation(a=None):
-     try:
+    try:
         global geosearch
         global locinfo
         location = geolocation.geocode(geosearch.get())
@@ -35,10 +36,10 @@ def getLocation(a=None):
         inlatitude.insert(0, location.latitude)
         inelevation.insert(0, location.altitude)
         locinfo.insert('1.0', location.address)
-     except Exception as ex:
-         print(ex)
-         locinfo.delete("1.0", "end")
-         locinfo.insert("1.0", "Error: Timeout / Location can not be found")
+    except Exception as ex:
+        print(ex)
+        locinfo.delete("1.0", "end")
+        locinfo.insert("1.0", "Error: Timeout / Location can not be found")
 
 
 def locationTop():
@@ -113,10 +114,11 @@ def selectItem(a=None):
         if tw.get_children(i):
             pass
         else:
-            childs = requests.get(f"https://sandbox.sensor.awi.de/rest/sensors/device/getChildrenOfDevice/{senid.get()}")
+            childs = requests.get(
+                f"https://sandbox.sensor.awi.de/rest/sensors/device/getChildrenOfDevice/{senid.get()}")
             childs = childs.json()
             for iiix, child in enumerate(childs):
-                tw.insert(i, index=iiix, text=child["shortName"], values=child["id"])#
+                tw.insert(i, index=iiix, text=child["shortName"], values=child["id"])  #
                 print(child["shortName"])
         searchbyid()
 
@@ -219,7 +221,6 @@ def upload():
         fine_frame.place(x=0, y=0, width=500, height=500)
         ttk.Label(fine_frame, text="Upload Successful!", font=("Calibri", 30)).pack()
         ttk.Button(fine_frame, text="Ok", command=fine.destroy).pack()
-
 
 
 def confirm():
