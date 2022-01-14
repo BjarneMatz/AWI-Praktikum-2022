@@ -6,8 +6,7 @@ import tkinter as tk
 from tkinter import ttk
 
 ti = str(datetime.datetime.utcnow())
-ti = ti[0:10] + "T"+ ti[11:19]
-
+ti = ti[0:10] + "T" + ti[11:19]
 
 # import re
 
@@ -16,9 +15,12 @@ sensor = ''  # sensor object from api (json)
 startisend = bool
 eventtypefromdd = ''
 token = ''
+
+
 def geteventtype(self):
     global eventtypefromdd
     eventtypefromdd = int(''.join(list(filter(str.isdigit, clicked.get()))))
+
 
 def searchbyid(event=None):
     """this function searches for a sensor by its id"""
@@ -54,7 +56,6 @@ def setMeta(sensor):
     iurn.config(state=tk.DISABLED)
     ishortname.config(state=tk.DISABLED)
     ilongname.config(state=tk.DISABLED)
-
 
 
 def selectItem(a=None):
@@ -139,7 +140,32 @@ def errorwin(error):
 
 def upload():
     """Here the data gets actually uploaded via api"""
-    pass
+    uploaddata = {
+        "itemID": int(eventdata['deviceid']),
+        "inheritToAllChildren": True,
+        "inheritToChildren": [
+            0
+        ],
+        "event": {
+            "startDate": f"{eventdata['startdate']}",
+            "endDate": f"{eventdata['enddate']}",
+            "label": f"{eventdata['label']}",
+            "description": f"{eventdata['description']}",
+            "eventType": int(eventdata["eventtype"]),
+            "longitude": int(eventdata['longitude']),
+            "latitude": int(eventdata['latitude']),
+            "elevationInMeter": int(eventdata["altitude"]),
+            "id": None
+        }
+    }
+    headers = {"Content-Type": "application/json"}
+    url = f"https://sandbox.sensor.awi.de/rest/sensors/events/putEvent/{eventdata['deviceid']}?createVersion=false"
+    response = requests.put(url, data=json.dumps(uploaddata), headers=headers, cookies={'x-auth-token': token})
+    print(token)
+    print(url)
+    print(headers)
+    print(json.dumps(uploaddata))
+    print(response)
 
 
 def confirm():
@@ -159,10 +185,13 @@ def confirm():
     ttk.Label(cframe, text=f"Latitude: {eventdata['latitude']}").place(x=0, y=210)
     ttk.Label(cframe, text=f"Altitude: {eventdata['altitude']}").place(x=0, y=240)
     ttk.Label(cframe, text=f"Description: {eventdata['description']}").place(x=0, y=270)
-    ttk.Label(cframe, text="Please be aware that this action can't be undone by this program and need to be undone through the web interface.").place(x=0, y=430)
+    ttk.Label(cframe,
+              text="Please be aware that this action can't be undone by this program and need to be undone through the web interface.").place(
+        x=0, y=430)
 
     ttk.Button(cframe, text="Im sure, go upload", command=upload).place(x=300, y=450)
     ttk.Button(cframe, text="STOP", command=cwin.destroy).place(x=200, y=450)
+
 
 ###################################################################################
 
@@ -246,8 +275,6 @@ for ix, ev in enumerate(events):
 ttk.Style.configure(style, "l.Label", font=(None, 20))
 ttk.Label(evframe, text="Enter event data below", style="l.Label").place(x=0, y=0)
 
-
-
 # dropdown for possible events from api
 dd = ttk.OptionMenu(evframe, clicked, *possibevents, command=geteventtype)
 dd.place(x=80, y=50, width=400)
@@ -290,20 +317,19 @@ inend.place(x=350, y=135)
 inend.bind("<Any-KeyPress>", getupdate)
 inend.insert(0, ti)
 
-
-
 indescription = tk.Text(evframe, font=("Calibri 10"))
 indescription.place(x=80, y=200, width=400, height=300)
 indescription.bind("<Any-KeyPress>", getupdate)
 
-
+# frame bottom left, simply holds upload button in place
 upframe = ttk.Frame(root)
 upframe.place(x=0, y=360, width=640, height=360)
 
-ttk.Button(upframe, text="Upload to SENSOR", command=confirm, style="b.TButton").place(x=30, y=30, width=500, height=250)
+ttk.Button(upframe, text="Upload to SENSOR", command=confirm, style="b.TButton").place(x=30, y=30, width=500,
+                                                                                       height=250)
 ttk.Style.configure(style, "b.TButton", font=(None, 30))
 
-
+# event data dictionary that holds data until upload
 eventdata = {
     "deviceid": "",
     "startdate": "",
