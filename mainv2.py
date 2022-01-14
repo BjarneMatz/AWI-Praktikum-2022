@@ -15,6 +15,7 @@ ti = ti[0:10] + "T"+ ti[11:19]
 sensor = ''  # sensor object from api (json)
 startisend = bool
 eventtypefromdd = ''
+token = ''
 def geteventtype(self):
     global eventtypefromdd
     eventtypefromdd = int(''.join(list(filter(str.isdigit, clicked.get()))))
@@ -70,7 +71,7 @@ def selectItem(a=None):
 
 def login():
     """login code by maximilian betz; used to login on sensor api service"""
-
+    global token
     with open('accounts.json', encoding='utf-8') as f:
         accounts = json.load(f)
     # Get sensor.awi.de event types access token
@@ -101,7 +102,10 @@ def login():
         })
 
         if response.status_code != 200:
+            errorwin("Login to SENSOR.awi.de failed.")
             raise Exception('Could not login. {} Status code: {}'.format(response.text, response.status_code))
+        else:
+            print("Login Successful")
         token = response.cookies['x-auth-token']
 
     except Exception as e:
@@ -110,7 +114,7 @@ def login():
 
 def getupdate(a=None):
     # get current data from entry boxes and save in dictonary
-    # eventdata["deviceid"] = sensor["id"]
+    eventdata["deviceid"] = senid.get()
     eventdata["description"] = indescription.get(1.0, "end")
     eventdata["longitude"] = inlongintude.get()
     eventdata["latitude"] = inlatitude.get()
@@ -120,8 +124,7 @@ def getupdate(a=None):
     eventdata["startdate"] = instart.get()
     eventdata["enddate"] = inend.get()
     eventdata["eventtype"] = eventtypefromdd
-    # update informations in upload frame
-    #updateuploadinfo()
+
 
 """
 def updateuploadinfo():
@@ -424,5 +427,5 @@ eventdata = {
 
 
 """
-
+login()
 root.mainloop()
