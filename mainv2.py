@@ -348,42 +348,33 @@ ttk.Label(evframe, text="Attention: Format sensetive | UTC timezone").place(x=80
 # event input boxes
 inlabel = ttk.Entry(evframe)
 inlabel.place(x=80, y=85, width=400)
-inlabel.bind("<Any-KeyPress>", getupdate)
 
 inlongintude = ttk.Entry(evframe)
 inlongintude.place(x=80, y=160)
-inlongintude.bind("<Any-KeyPress>", getupdate)
 
 inlatitude = ttk.Entry(evframe)
 inlatitude.place(x=350, y=160)
-inlatitude.bind("<Any-KeyPress>", getupdate)
 
 inelevation = ttk.Entry(evframe)
 inelevation.place(x=80, y=185)
-inelevation.bind("<Any-KeyPress>", getupdate)
 
 instart = ttk.Entry(evframe)
 instart.place(x=80, y=110)
-instart.bind("<Any-KeyPress>", getupdate)
 instart.insert(0, ti)
 
 inend = ttk.Entry(evframe)
 inend.place(x=350, y=110)
-inend.bind("<Any-KeyPress>", getupdate)
 inend.insert(0, ti)
 
 indescription = tk.Text(evframe, font=("Calibri 10"))
 indescription.place(x=80, y=350, width=400, height=300)
-indescription.bind("<Any-KeyPress>", getupdate)
 
 ttk.Button(evframe, text="Get location by name search", command=locationTop).place(x=80, y=210, width=400)
 
 # frame bottom left, simply holds upload button in place
 upframe = ttk.Frame(root)
 upframe.place(x=0, y=360, width=640, height=360)
-
-ttk.Button(upframe, text="Upload to SENSOR", command=confirm, style="b.TButton").place(x=30, y=30, width=500,
-                                                                                       height=250)
+ttk.Button(upframe, text="Upload to SENSOR", command=confirm, style="b.TButton").place(x=30, y=30, width=500,                                                                                   height=250)
 ttk.Style.configure(style, "b.TButton", font=(None, 30))
 
 # event data dictionary that holds data until upload
