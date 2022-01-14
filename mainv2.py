@@ -20,6 +20,7 @@ startisend = bool
 eventtypefromdd = ''
 token = ''
 
+
 def getLocation(a=None):
      try:
         global geosearch
@@ -40,7 +41,6 @@ def getLocation(a=None):
          locinfo.insert("1.0", "Error: Timeout / Location can not be found")
 
 
-
 def locationTop():
     global geosearch
     global locinfo
@@ -55,6 +55,8 @@ def locationTop():
     search_button.grid(column=0, row=4, columnspan=2)
     geosearch.bind("<Return>", getLocation)
     search_button.bind("<Return>", getLocation)
+
+
 def geteventtype(a=None):
     global eventtypefromdd
     eventtypefromdd = int(''.join(list(filter(str.isdigit, clicked.get()))))
@@ -99,12 +101,21 @@ def setMeta(a):
 def selectItem(a=None):
     """"this functions returns the id of the sensor selected in the treeview menu"""
     i = tw.focus()
-    i = tw.item(i)
-    if i["values"] == "":
+    h = tw.item(i)
+
+    if h["values"] == "":
         pass
     else:
         senid.delete(0, "end")
-        senid.insert(0, i["values"])
+        senid.insert(0, h["values"])
+        if tw.get_children(i):
+            pass
+        else:
+            childs = requests.get(f"https://sandbox.sensor.awi.de/rest/sensors/device/getChildrenOfDevice/{senid.get()}")
+            childs = childs.json()
+            for iiix, child in enumerate(childs):
+                tw.insert(i, index=iiix, text=child["shortName"], values=child["id"])#
+                print(child["shortName"])
         searchbyid()
 
 
@@ -141,7 +152,7 @@ def login():
 
 def getupdate(a=None):
     # get current data from entry boxes and save in dictonary
-    eventdata["deviceid"] = senid.get()
+    eventdata["deviceid"] = isenid.get()
     eventdata["description"] = indescription.get(1.0, "end")
     eventdata["longitude"] = inlongintude.get()
     eventdata["latitude"] = inlatitude.get()
@@ -199,6 +210,7 @@ def upload():
     else:
         cwin.destroy()
 
+
 def confirm():
     """Function to open a confirm window on upload begin"""
     global cwin
@@ -241,9 +253,8 @@ senframe.place(x=0, y=0, height=360, width=640, bordermode="inside")
 
 ttk.Label(senframe, text="Sensor Event Manager").place(x=0, y=0)
 
-tw = ttk.Treeview(senframe, columns="c1", cursor="hand1")
+tw = ttk.Treeview(senframe)
 tw.place(x=0, y=25, width=200, height=330)
-tw.heading(column="c1", text="Collections")
 
 # scrollbar for treeview
 twsb = ttk.Scrollbar(senframe, orient="vertical", command=tw.yview, cursor="double_arrow")
@@ -287,7 +298,7 @@ for ix, col in enumerate(collections):
     items = items.json()
     main = tw.insert('', index=ix, text=col["collectionName"])
     for iix, item in enumerate(items):
-        tw.insert(main, index=iix, text=item["shortName"], values=item["id"])
+        childinsert = tw.insert(main, index=iix, text=item["shortName"], values=item["id"])
 
 # event input frame
 evframe = ttk.Frame(root)
