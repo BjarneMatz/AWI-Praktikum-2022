@@ -337,7 +337,7 @@ dd.place(x=80, y=50, width=400)
 
 # input entry box description
 ttk.Label(evframe, text="Label:").place(x=0, y=85)
-ttk.Label(evframe, text="Description:").place(x=0, y=350)
+ttk.Label(evframe, text="Description:").place(x=0, y=300)
 ttk.Label(evframe, text="Longitude:").place(x=0, y=160)
 ttk.Label(evframe, text="Latitude:").place(x=250, y=160)
 ttk.Label(evframe, text="Altitude:").place(x=0, y=185)
@@ -369,7 +369,7 @@ inend.insert(0, ti)
 ttk.Button(evframe, text="Get location by name search", command=locationTop).place(x=80, y=210, width=400)
 
 indescription = tk.Text(evframe, font=("Calibri 10"))
-indescription.place(x=80, y=350, width=400, height=300)
+indescription.place(x=80, y=300, width=400, height=300)
 
 
 
