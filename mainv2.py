@@ -44,7 +44,9 @@ def getLocation(a=None):
 def locationTop():
     global geosearch
     global locinfo
-    loc = tk.Toplevel()
+    loca = tk.Toplevel()
+    loc = ttk.Frame(loca)
+    loc.pack()
     ttk.Label(loc, text="Search location by name").grid(column=0, row=0, columnspan=3)
     ttk.Label(loc, text="Enter Location Name:").grid(column=0, row=1)
     locinfo = tk.Text(loc, width=50, height=10)
@@ -162,18 +164,19 @@ def getupdate(a=None):
     eventdata["startdate"] = instart.get()
     eventdata["enddate"] = inend.get()
     eventdata["eventtype"] = eventtypefromdd
+    print(eventdata)
 
 
 def errorwin(error):
     """function for creating error message boxes"""
     errwin = tk.Toplevel()
     errwin.resizable(False, False)
-    errwin.geometry("500x200")
+    errwin.geometry("1260x200")
     err = ttk.Frame(errwin)
     err.place(x=0, y=0, width=4000, height=2000)
-    ttk.Label(errwin, text="Error:", font="Calibri 20").place(x=0, y=0)
-    ttk.Label(errwin, text=error, font="Calibri 12").place(x=0, y=30)
-    ttk.Button(errwin, text="OK", command=errwin.destroy).place(x=50, y=100)
+    ttk.Label(errwin, text="Error:", font="Calibri 20").pack()
+    ttk.Label(errwin, text=error, font="Calibri 12").pack()
+    ttk.Button(errwin, text="OK", command=errwin.destroy).pack()
 
 
 def upload():
@@ -209,6 +212,14 @@ def upload():
         raise Exception("Transfer to SENSOR.awi.de was NOT successful!")
     else:
         cwin.destroy()
+        fine = tk.Toplevel(root)
+        fine.title("Upload Successful")
+        fine.geometry("500x100")
+        fine_frame = ttk.Frame(fine)
+        fine_frame.place(x=0, y=0, width=500, height=500)
+        ttk.Label(fine_frame, text="Upload Successful!", font=("Calibri", 30)).pack()
+        ttk.Button(fine_frame, text="Ok", command=fine.destroy).pack()
+
 
 
 def confirm():
