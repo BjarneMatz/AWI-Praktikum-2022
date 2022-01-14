@@ -126,24 +126,6 @@ def getupdate(a=None):
     eventdata["eventtype"] = eventtypefromdd
 
 
-"""
-def updateuploadinfo():
-    upid.delete(0, tk.END)
-    upid.insert(0, eventdata["deviceid"])
-    updesc.delete(0, tk.END)
-    updesc.insert(0, eventdata["desctiption"])
-    uplong.delete(0, "end")
-    uplong.insert(0, eventdata["longitude"])
-    uplat.delete(0, tk.END)
-    uplat.insert(0, eventdata["latitude"])
-    uplab.delete(0, "end")
-    uplab.insert(0, eventdata["label"])
-    upel.delete(0, "end")
-    upel.insert(0, eventdata["altitude"])
-    uptype.delete(0, tk.END)
-    uptype.insert(0, eventdata["eventtype"])
-"""
-
 def errorwin(error):
     """function for creating error message boxes"""
     errwin = tk.Toplevel()
@@ -153,9 +135,13 @@ def errorwin(error):
     ttk.Label(errwin, text="Error:", font="Calibri 20").place(x=0, y=0)
     ttk.Label(errwin, text=error, font="Calibri 12").place(x=0, y=30)
     ttk.Button(errwin, text="OK", command=errwin.destroy).place(x=50, y=100)
+
+
 def upload():
     """Here the data gets actually uploaded via api"""
     pass
+
+
 def confirm():
     """Function to open a confirm window on upload begin"""
     getupdate()
@@ -173,12 +159,13 @@ def confirm():
     ttk.Label(cframe, text=f"Latitude: {eventdata['latitude']}").place(x=0, y=210)
     ttk.Label(cframe, text=f"Altitude: {eventdata['altitude']}").place(x=0, y=240)
     ttk.Label(cframe, text=f"Description: {eventdata['description']}").place(x=0, y=270)
-    ttk.Label(cframe, text="Please be aware that this action can't be undone by this program and need to be undone through the web interface").place(x=0, y=430)
+    ttk.Label(cframe, text="Please be aware that this action can't be undone by this program and need to be undone through the web interface.").place(x=0, y=430)
 
     ttk.Button(cframe, text="Im sure, go upload", command=upload).place(x=300, y=450)
     ttk.Button(cframe, text="STOP", command=cwin.destroy).place(x=200, y=450)
 
-    pass
+###################################################################################
+
 # defining the root window
 root = tk.Tk()
 root.title("Event Writer")
@@ -191,7 +178,7 @@ style.theme_use("clam")
 senframe = ttk.Frame(root)
 senframe.place(x=0, y=0, height=360, width=640, bordermode="inside")
 
-ttk.Label(senframe, text="Sensor Event Manager").grid(column=0, row=0)
+ttk.Label(senframe, text="Sensor Event Manager").place(x=0, y=0)
 
 tw = ttk.Treeview(senframe, columns="c1", cursor="hand1")
 tw.place(x=0, y=25, width=200, height=330)
@@ -240,20 +227,6 @@ for ix, col in enumerate(collections):
     main = tw.insert('', index=ix, text=col["collectionName"])
     for iix, item in enumerate(items):
         tw.insert(main, index=iix, text=item["shortName"], values=item["id"])
-
-"""
-# part of old time picker; maybe reusable
-
-def samedate():
-global startisend
-print(c_samedate_state.get())
-if c_samedate_state.get() == 0:
-    enddateentry.config(state="NORMAL")
-    startisend = False
-if c_samedate_state.get() == 1:
-    enddateentry.config(state=tk.DISABLED)
-    startisend = True
-"""
 
 # event input frame
 evframe = ttk.Frame(root)
@@ -324,59 +297,12 @@ indescription.place(x=80, y=200, width=400, height=300)
 indescription.bind("<Any-KeyPress>", getupdate)
 
 
-"""
-# old time function; maybe reusable
-
-Button(evframe, text="Set Start Date", command=lambda: selectdate("start")).place(x=100, y=200)
-startdateentry = ttk.Entry(evframe)
-startdateentry.place(x=380, y=110, width=130)
-enddateentry = ttk.Entry(evframe)
-enddateentry.place(x=380, y=135, width=130)
-ttk.Label(evframe, text="Start Date (format sensetive!): ").place(x=200, y=110)
-ttk.Label(evframe, text="End Date (format sensetive!): ").place(x=200, y=135)
-c_samedate_state = tk.Variable()
-c_samedate = ttk.Checkbutton(evframe, variable=c_samedate_state, text="Same start and end date", onvalue=1, offvalue=0, command=samedate)
-c_samedate.place(x=200, y=160)
-#c_samedate.deselect()
-"""
-
 upframe = ttk.Frame(root)
 upframe.place(x=0, y=360, width=640, height=360)
 
 ttk.Button(upframe, text="Upload to SENSOR", command=confirm, style="b.TButton").place(x=30, y=30, width=500, height=250)
 ttk.Style.configure(style, "b.TButton", font=(None, 30))
 
-
-"""
-ttk.Label(upframe, text="Following data will be uploaded to SENSOR:").place(x=0, y=0)
-ttk.Label(upframe, text="DeviceID: ").place(x=0, y=25)
-ttk.Label(upframe, text="StartDate: ").place(x=0, y=50)
-ttk.Label(upframe, text="EndDate: ").place(x=0, y=75)
-ttk.Label(upframe, text="Description: ").place(x=0, y=100)
-ttk.Label(upframe, text="Label: ").place(x=0, y=125)
-ttk.Label(upframe, text="EventType: ").place(x=0, y=150)
-ttk.Label(upframe, text="Longitude: ").place(x=0, y=175)
-ttk.Label(upframe, text="Latitude: ").place(x=0, y=200)
-ttk.Label(upframe, text="Altitude: ").place(x=0, y=225)
-
-upid.place(x=75, y=25, width=300)
-upstart = ttk.Entry(upframe)
-upstart.place(x=75, y=50, width=300)
-upend = ttk.Entry(upframe)
-upend.place(x=75, y=75, width=300)
-updesc = ttk.Entry(upframe)
-updesc.place(x=75, y=100, width=300)
-uplab = ttk.Entry(upframe)
-uplab.place(x=75, y=125, width=300)
-uptype = ttk.Entry(upframe)
-uptype.place(x=75, y=150, width=300)
-uplong = ttk.Entry(upframe)
-uplong.place(x=75, y=175, width=300)
-uplat = ttk.Entry(upframe)
-uplat.place(x=75, y=200, width=300)
-upel = ttk.Entry(upframe)
-upel.place(x=75, y=225, width=300)
-"""
 
 eventdata = {
     "deviceid": "",
@@ -427,5 +353,6 @@ eventdata = {
 
 
 """
+
 login()
 root.mainloop()
