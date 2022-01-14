@@ -17,12 +17,12 @@ eventtypefromdd = ''
 token = ''
 
 
-def geteventtype(self):
+def geteventtype(a=None):
     global eventtypefromdd
     eventtypefromdd = int(''.join(list(filter(str.isdigit, clicked.get()))))
 
 
-def searchbyid(event=None):
+def searchbyid(a=None):
     """this function searches for a sensor by its id"""
     try:
         sid = senid.get()
@@ -32,12 +32,12 @@ def searchbyid(event=None):
         sensor = sensor.json()
         setMeta(sensor)
         getupdate()
-    except ValueError as ex:
+    except ValueError:
         x = "Input outside of search zone"
         errorwin(x)
 
 
-def setMeta(sensor):
+def setMeta(a):
     """this function sets the meta information in the sensor information frame to the current sensor used"""
 
     isenid.config(state=tk.NORMAL)
@@ -48,10 +48,10 @@ def setMeta(sensor):
     iurn.delete(0, "end")
     ishortname.delete(0, "end")
     ilongname.delete(0, "end")
-    isenid.insert(0, sensor['id'])
-    iurn.insert(0, sensor['urn'])
-    ishortname.insert(0, sensor["shortName"])
-    ilongname.insert(0, sensor["longName"])
+    isenid.insert(0, a['id'])
+    iurn.insert(0, a['urn'])
+    ishortname.insert(0, a["shortName"])
+    ilongname.insert(0, a["longName"])
     isenid.config(state=tk.DISABLED)
     iurn.config(state=tk.DISABLED)
     ishortname.config(state=tk.DISABLED)
@@ -77,18 +77,6 @@ def login():
         accounts = json.load(f)
     # Get sensor.awi.de event types access token
     try:
-        # Get all device operation types and create id look up table
-        url = accounts['sensorurl'] + '/sensors/events/getAllEventTypes'
-        response = requests.get(url)
-        if response.status_code != 200:
-            raise Exception('Could not get AllEventTypes. {}'.format(response.text))
-
-        device_operation_types = response.json()
-        device_operation_ids = {}
-        for type in device_operation_types:
-            device_operation_ids[type["generalName"]] = type["id"]
-        logging.info("Mapping Device Operation Type <-> ID  {}".format(device_operation_ids))
-
         # Get user and password from accounts.json file. Get access token and store cookie
         username = accounts['sensorawi']['user']
         password = accounts['sensorawi']['password']
