@@ -372,7 +372,6 @@ indescription = tk.Text(evframe, font=("Calibri 10"))
 indescription.place(x=80, y=300, width=400, height=300)
 
 
-
 # frame bottom left, simply holds upload button in place
 upframe = ttk.Frame(root)
 upframe.place(x=0, y=360, width=640, height=360)
