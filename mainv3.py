@@ -174,7 +174,9 @@ class App:
         self.err = ttk.Frame(self.errwin)
         self.err.place(x=0, y=0, width=4000, height=2000)
         ttk.Label(self.errwin, text="Error:", font="Calibri 20").pack()
-        ttk.Label(self.errwin, text=error, font="Calibri 12").pack()
+        errormessage = tk.Text(self.errwin, font="Calibri 12")
+        errormessage.pack()
+        errormessage.insert("1.0", error)
         okbutton = ttk.Button(self.errwin, text="OK", command=self.errwin.destroy)
         okbutton.pack()
         okbutton.focus_set()
@@ -213,7 +215,8 @@ class App:
         print(json.dumps(uploaddata))
         print(response)
         if response.status_code != 201:
-            self.errorwin("Transfer to SENSOR.awi.de FAILED!")
+            self.errorwin(response.text)
+            print(response.text)
             raise Exception("Transfer to SENSOR.awi.de FAILED!")
         else:
             self.cwin.destroy()
@@ -407,7 +410,6 @@ class App:
         self.root.after(100, self.startprogram)
         self.root.mainloop()
 
-
-program = App()
-program.run()
-input('Press ENTER to exit')
+if __name__ == "__main__":
+    program = App()
+    program.run()
