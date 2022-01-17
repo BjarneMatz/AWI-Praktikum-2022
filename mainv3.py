@@ -3,8 +3,9 @@ import json
 import logging
 import tkinter as tk
 from tkinter import ttk
-from geopy.geocoders import Nominatim
+
 import requests
+from geopy.geocoders import Nominatim
 
 geolocation = Nominatim(user_agent="SENSOR-Event-Manger")
 
@@ -31,10 +32,13 @@ class App:
         self.locinfo.grid(column=0, row=3, columnspan=3)
         self.geosearch = ttk.Entry(self.loc, width=30)
         self.geosearch.grid(column=1, row=1)
+
         self.search_button = ttk.Button(self.loc, command=self.getLocation, text="Get Location")
-        self.search_button.grid(column=0, row=4, columnspan=2)
+        self.search_button.grid(column=0, row=4)
+        ttk.Button(self.loc, command=self.loc.destroy, text="Ok").grid(row=3, column=1)
         self.geosearch.bind("<Return>", self.getLocation)
         self.search_button.bind("<Return>", self.getLocation)
+        self.geosearch.focus_set()
 
     def getLocation(self, a=None):
         try:
@@ -51,7 +55,7 @@ class App:
         except Exception as ex:
             print(ex)
             self.locinfo.delete("1.0", "end")
-            self.locinfo.insert("1.0", "Error: Timeout / Location can not be found")
+            self.locinfo.insert("1.0", "Error: Timeout / Location can't be found")
 
     def geteventtype(self, a=None):
         self.eventtypefromdd = int(''.join(list(filter(str.isdigit, self.clicked.get()))))
@@ -109,11 +113,13 @@ class App:
                     self.tw.insert(i, index=iiix, text=child["shortName"], values=child["id"])  #
                     print(child["shortName"])
             self.searchbyid()
+
     def getdate(self):
         self.ti = str(datetime.datetime.utcnow())
         self.ti = self.ti[0:10] + "T" + self.ti[11:19]
         self.instart.insert(0, self.ti)
         self.inend.insert(0, self.ti)
+
     def login(self):
         """login code by maximilian betz; used to login on sensor api service"""
         with open('accounts.json', encoding='utf-8') as f:
@@ -172,8 +178,10 @@ class App:
         okbutton = ttk.Button(self.errwin, text="OK", command=self.errwin.destroy)
         okbutton.pack()
         okbutton.focus_set()
+
         def quit(a=None):
             self.errwin.destroy()
+
         self.errwin.bind("<Return>", quit)
 
     def upload(self):
@@ -297,7 +305,6 @@ class App:
         self.dd = ttk.OptionMenu(self.evframe, self.clicked, *self.possibevents, command=self.geteventtype)
         self.dd.place(x=80, y=50, width=400)
 
-
         # input entry box description
         ttk.Label(self.evframe, text="Label:").place(x=0, y=85)
         ttk.Label(self.evframe, text="Description:").place(x=0, y=300)
@@ -330,15 +337,16 @@ class App:
         self.indescription = tk.Text(self.evframe, font=("Calibri 10"))
         self.indescription.place(x=80, y=300, width=400, height=300)
 
-        ttk.Button(self.evframe, text="Get location by name search", command=self.locationTop).place(x=80, y=210, width=400)
+        ttk.Button(self.evframe, text="Get location by name search", command=self.locationTop).place(x=80, y=210,
+                                                                                                     width=400)
 
     def uploadframe(self):
         # frame bottom left, simply holds upload button in place
         self.upframe = ttk.Frame(self.root)
         self.upframe.place(x=0, y=360, width=640, height=360)
         ttk.Button(self.upframe, text="Upload to SENSOR", command=self.confirm, style="b.TButton").place(x=30, y=30,
-                                                                                                    width=500,
-                                                                                                    height=250)
+                                                                                                         width=500,
+                                                                                                         height=250)
         ttk.Style.configure(self.style, "b.TButton", font=(None, 30))
 
     def settree(self):
@@ -370,6 +378,7 @@ class App:
             print(ev["generalName"])
             self.possibevents.append(ev["generalName"] + " (" + str(ev["id"]) + ")")
         self.dd.set_menu(*self.possibevents)
+
     def initvars(self):
         # event data dictionary that holds data until upload
         self.eventdata = {
@@ -399,7 +408,6 @@ class App:
         self.root.mainloop()
 
 
-
-
 program = App()
 program.run()
+input('Press ENTER to exit')
