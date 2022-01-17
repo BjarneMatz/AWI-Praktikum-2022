@@ -171,11 +171,11 @@ class App:
         """function for creating error message boxes"""
         self.errwin = tk.Toplevel()
         self.errwin.resizable(False, False)
-        self.errwin.geometry("1260x200")
+        self.errwin.geometry("1260x350")
         self.err = ttk.Frame(self.errwin)
         self.err.place(x=0, y=0, width=4000, height=2000)
         ttk.Label(self.errwin, text="Error:", font="Calibri 20").pack()
-        errormessage = tk.Text(self.errwin, font="Calibri 12")
+        errormessage = tk.Text(self.errwin, font="Calibri 12", width=100, height=10)
         errormessage.pack()
         errormessage.insert("1.0", error)
         okbutton = ttk.Button(self.errwin, text="OK", command=self.errwin.destroy)
@@ -231,24 +231,31 @@ class App:
 
     def confirm(self):
         """Function to open a confirm window on upload begin"""
+        if self.senid.get() == '':
+            self.errorwin("You need to select a sensor to upload to!")
+            return
         if self.inlabel.get() == '':
             self.errorwin("You need to assign a label to be able to upload!")
             return
         if self.clicked.get() == "Select Event":
             self.errorwin("You need to select an event type to be able to upload!")
             return
-        if self.inlongintude != float:
-            self.errorwin("Longitude must be a number between -180 and +180!")
-            return
-        if float(self.inlongintude.get()) > +180 or float(self.inlongintude.get()) < -180:
-            self.errorwin("Longitude must be a number between -180 and +180!")
-            return
-        if self.inlatitude != float:
-            self.errorwin("Latitude must be a number between -90 an 90!")
-            return
-        if float(self.inlatitude.get()) < -90 or float(self.inlatitude.get()) > +90:
-            self.errorwin("Latitude must be a number between -90 an 90!")
-            return
+        if self.inlongintude.get() != '':
+            if self.inlongintude.get() != float:
+                self.errorwin("Longitude must be a number between -180 and +180!")
+                return
+            else:
+                if float(self.inlongintude.get()) > +180 or float(self.inlongintude.get()) < -180:
+                    self.errorwin("Longitude must be a number between -180 and +180!")
+                    return
+        if self.inlatitude.get() != '':
+            if self.inlatitude.get() != float:
+                self.errorwin("Latitude must be a number between -90 an 90!")
+                return
+            else:
+                if float(self.inlatitude.get()) < -90 or float(self.inlatitude.get()) > +90:
+                    self.errorwin("Latitude must be a number between -90 an 90!")
+                    return
 
 
         print(self.clicked.get())
