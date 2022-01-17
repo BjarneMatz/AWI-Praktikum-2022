@@ -4,6 +4,7 @@ import logging
 import tkinter as tk
 from tkinter import ttk
 
+
 import requests
 from geopy.geocoders import Nominatim
 
@@ -71,7 +72,7 @@ class App:
             self.setMeta(self.sensor)
             self.getupdate()
         except ValueError:
-            x = "Input outside of search zone"
+            x = "Input is outside of search zone!"
             self.errorwin(x)
 
     def setMeta(self, a):
@@ -94,7 +95,7 @@ class App:
         self.ishortname.config(state=tk.DISABLED)
         self.ilongname.config(state=tk.DISABLED)
 
-    def selectItem(self):
+    def selectItem(self, a=None):
         """"this functions returns the id of the sensor selected in the treeview menu"""
         i = self.tw.focus()
         h = self.tw.item(i)
