@@ -58,6 +58,7 @@ class App:
             self.locinfo.insert("1.0", "Error: Timeout / Location can't be found")
 
     def geteventtype(self, a=None):
+
         self.eventtypefromdd = int(''.join(list(filter(str.isdigit, self.clicked.get()))))
 
     def searchbyid(self, a=None):
@@ -233,6 +234,24 @@ class App:
         if self.inlabel.get() == '':
             self.errorwin("You need to assign a label to be able to upload!")
             return
+        if self.clicked.get() == "Select Event":
+            self.errorwin("You need to select an event type to be able to upload!")
+            return
+        if self.inlongintude != float:
+            self.errorwin("Longitude must be a number between -180 and +180!")
+            return
+        if float(self.inlongintude.get()) > +180 or float(self.inlongintude.get()) < -180:
+            self.errorwin("Longitude must be a number between -180 and +180!")
+            return
+        if self.inlatitude != float:
+            self.errorwin("Latitude must be a number between -90 an 90!")
+            return
+        if float(self.inlatitude.get()) < -90 or float(self.inlatitude.get()) > +90:
+            self.errorwin("Latitude must be a number between -90 an 90!")
+            return
+
+
+        print(self.clicked.get())
         self.getupdate()
         self.cwin = tk.Toplevel(self.root)
         self.cwin.geometry("700x500")
@@ -376,6 +395,7 @@ class App:
         events = requests.get("https://sandbox.sensor.awi.de/rest/sensors/events/getAllEventTypes")
         events = events.json()
         self.clicked.set("Select Event")
+        self.dd.setvar('', "Select Event")
         for ix, ev in enumerate(events):
             print(ix)
             print(ev["generalName"])
