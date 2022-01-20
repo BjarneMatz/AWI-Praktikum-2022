@@ -53,7 +53,10 @@ class Cleaner:
         self.imap.select()
 
         now = datetime.datetime.today()
-        then = now - timedelta(days=90)
+        with open('account.json', encoding='utf-8') as f:
+            account = json.load(f)
+            maxtime = account['max-time-in-days']
+        then = now - timedelta(days=int(maxtime))
         then = then.date()
         print(then)
         testtime = then.strftime('%d-%b-%Y')

@@ -2,5 +2,6 @@
 	"user": "example@mail.com",
 	"password": "TheBestPasswordInHistory",
 	"server": "imap.yourmailserver.here",
-	"port": "143"
+	"port": "143",
+	"max-time-in-days": "90"
 }
