@@ -1,9 +1,9 @@
-import imaplib
-import json
 import datetime
-from datetime import timedelta
 import email
 import email.utils
+import imaplib
+import json
+from datetime import timedelta
 
 
 class Log:
@@ -28,7 +28,6 @@ class Cleaner:
         self.imap.close()
         self.imap.logout()
 
-
     def login(self):
         """Login to mailserver in account.json"""
         with open('account.json', encoding='utf-8') as f:
@@ -49,8 +48,9 @@ class Cleaner:
             except Exception as ex:
                 log.print("Login failed!")
                 log.print(ex)
+
     def scananddelete(self):
-        #select no specific folder
+        # select no specific folder
         self.imap.select()
         log.print("Removed folder selection...")
         # set date til mails get removed
@@ -68,22 +68,23 @@ class Cleaner:
 
         _, mails = self.imap.search(None, f'before "{testtime}"')
         log.print("Mail search completed...")
-        print("Mail IDs : {}\n".format(mails[0].decode().split())) # print all mail ids that have been found
+        print("Mail IDs : {}\n".format(mails[0].decode().split()))  # print all mail ids that have been found
 
         for mail_id in mails[0].decode():
             log.print(f"Decoding mail id {mail_id}...")
             response, mail_data = self.imap.fetch(mail_id, '(RFC822)')
-            self.message = email.message_from_bytes(mail_data[0])
+            self.message = email.message_from_bytes(mail_data[0][1])
             subject = (self.message.get("subject"))
             log.print(f"Found {subject}...")
             print("Deleting", subject)
             self.imap.store(mail_id, "+FLAGS", "\\Deleted")
             log.print(f"Flagged {mail_id} as deleted...")
         log.print("Looped through all mails successfully...")
-        #delete all mails that are flagged as \\Deleted as set above
+        # delete all mails that are flagged as \\Deleted as set above
         self.imap.expunge()
         log.print("Deleted all mails flagged as deleted...")
         log.print("Exiting now...")
+
 
 if __name__ == "__main__":
     log = Log()
