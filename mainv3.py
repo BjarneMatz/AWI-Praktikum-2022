@@ -36,7 +36,7 @@ class App:
 
         self.search_button = ttk.Button(self.loc, command=self.getLocation, text="Get Location")
         self.search_button.grid(column=0, row=4)
-        ttk.Button(self.loc, command=self.loc.destroy, text="Ok").grid(row=3, column=1)
+        ttk.Button(self.loc, command=self.loca.destroy, text="Ok").grid(row=4, column=1)
         self.geosearch.bind("<Return>", self.getLocation)
         self.search_button.bind("<Return>", self.getLocation)
         self.geosearch.focus_set()
@@ -183,9 +183,8 @@ class App:
         okbutton.pack()
         okbutton.focus_set()
 
-        def quit(a=None):
-            self.errwin.destroy()
-
+        def quit(a=None):           # stupid function
+            self.errwin.destroy()   # to make tkinter work
         self.errwin.bind("<Return>", quit)
 
     def upload(self):
@@ -242,7 +241,7 @@ class App:
             self.errorwin("You need to select an event type to be able to upload!")
             return
         if self.inlongintude.get() != '':
-            if self.inlongintude.get() != float:
+            if not self.inlongintude.get().replace('.', '', 1).isdigit():
                 self.errorwin("Longitude must be a number between -180 and +180!")
                 return
             else:
@@ -250,13 +249,17 @@ class App:
                     self.errorwin("Longitude must be a number between -180 and +180!")
                     return
         if self.inlatitude.get() != '':
-            if self.inlatitude.get() != float:
+            if not self.inlatitude.get().replace('.', '', 1).isdigit():
                 self.errorwin("Latitude must be a number between -90 an 90!")
                 return
             else:
                 if float(self.inlatitude.get()) < -90 or float(self.inlatitude.get()) > +90:
                     self.errorwin("Latitude must be a number between -90 an 90!")
                     return
+        if self.inelevation.get() != '':
+            if not self.inelevation.get().replace('.', '', 1).isdigit():
+                self.errorwin("Elevation can only be a number!")
+                return
 
 
         print(self.clicked.get())
